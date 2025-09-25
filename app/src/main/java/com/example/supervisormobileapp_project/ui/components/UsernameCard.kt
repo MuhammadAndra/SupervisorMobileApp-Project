@@ -1,6 +1,7 @@
 package com.example.supervisormobileapp_project.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,19 +26,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import okhttp3.internal.wait
 
 @Composable
-fun UsernameCard(modifier: Modifier = Modifier) {
-    ElevatedCard(
-        colors = CardColors(
+fun UsernameCard(
+    modifier: Modifier = Modifier,
+    onNavigateToProfileDetail: (() -> Unit)? = null,
+) {
+    val cardColors = if (onNavigateToProfileDetail == null) {
+        CardColors(
             containerColor = Color.Transparent,
             contentColor = Color.Transparent,
             disabledContainerColor = Color.Transparent,
             disabledContentColor = Color.Transparent
-        ),
-        elevation = CardDefaults.elevatedCardElevation(0.dp),
+        )
+    } else {
+        CardDefaults.elevatedCardColors(Color.White)
+    }
+    val cardElevation = if (onNavigateToProfileDetail == null) {
+        CardDefaults.elevatedCardElevation(0.dp)
+    } else {
+        CardDefaults.elevatedCardElevation(5.dp)
+    }
+
+    ElevatedCard(
+        colors = cardColors,
+        elevation = cardElevation,
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                if (onNavigateToProfileDetail == null) {
+
+                } else {
+                    onNavigateToProfileDetail()
+                }
+            }
     ) {
         Row(
             modifier = modifier,
@@ -64,13 +87,13 @@ fun UsernameCard(modifier: Modifier = Modifier) {
             Column {
                 Text(
                     "Budi Setiawan",
-                    color = Color.White,
+                    color = if (onNavigateToProfileDetail == null) Color.White else Color.Black,
                     fontWeight = FontWeight.Medium,
                     fontSize = 22.sp
                 )
                 Text(
                     "Supervisor",
-                    color = Color.White,
+                    color = if (onNavigateToProfileDetail == null) Color.White else Color.Black,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp
                 )
