@@ -21,6 +21,6 @@ object ReadNFCTag
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     composable<Home> {
-        HomeScreen()
+        HomeScreen(onHomeClick = {}, onScanClick = {}, onProfileClick = {})
     }
 }
