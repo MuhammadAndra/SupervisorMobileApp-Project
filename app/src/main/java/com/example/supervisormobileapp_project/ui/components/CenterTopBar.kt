@@ -12,7 +12,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CenterTopBar(modifier: Modifier = Modifier,title: String) {
+fun CenterTopBar(
+    modifier: Modifier = Modifier,
+    title: String,
+    color: Color? = null
+) {
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -22,6 +26,11 @@ fun CenterTopBar(modifier: Modifier = Modifier,title: String) {
                 color = Color.White
             )
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(Color.Transparent),
+        colors =
+            if (color != null) {
+                TopAppBarDefaults.centerAlignedTopAppBarColors(color)
+            } else {
+                TopAppBarDefaults.centerAlignedTopAppBarColors(Color.Transparent)
+            }
     )
 }

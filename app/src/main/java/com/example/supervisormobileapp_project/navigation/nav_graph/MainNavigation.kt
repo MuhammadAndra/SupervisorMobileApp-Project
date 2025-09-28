@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.supervisormobileapp_project.ui.screen.home.HomeScreen
 import com.example.supervisormobileapp_project.ui.screen.profile.ProfileScreen
+import com.example.supervisormobileapp_project.ui.screen.scan.ReadNFCScreen
 
 @Serializable
 object Home
@@ -17,14 +18,17 @@ object Profile
 object EditProfile
 
 @Serializable
-object ReadNFCTag
+object ReadNFC
 
 
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     composable<Home> {
         HomeScreen(
             onHomeClick = {},
-            onScanClick = {},
+            onReadNFCClick = {
+                navController.popBackStack()
+                navController.navigate(ReadNFC)
+            },
             onProfileClick = {
                 navController.popBackStack()
                 navController.navigate(Profile)
@@ -38,9 +42,26 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 navController.popBackStack()
                 navController.navigate(Home)
             },
-            onScanClick = {},
+            onReadNFCClick = {
+                navController.popBackStack()
+                navController.navigate(ReadNFC)
+            },
             onProfileClick = {},
             onNavigateToProfileDetail = {}
+        )
+    }
+
+    composable<ReadNFC> {
+        ReadNFCScreen(
+            onHomeClick = {
+                navController.popBackStack()
+                navController.navigate(Home)
+            },
+            onReadNFCClick = {},
+            onProfileClick = {
+                navController.popBackStack()
+                navController.navigate(Profile)
+            },
         )
     }
 }

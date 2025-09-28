@@ -5,15 +5,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.CustomButton
@@ -38,7 +41,7 @@ import com.example.supervisormobileapp_project.ui.components.UsernameCard
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     onHomeClick: () -> Unit,
-    onScanClick: () -> Unit,
+    onReadNFCClick: () -> Unit,
     onProfileClick: () -> Unit,
     onNavigateToProfileDetail: () -> Unit
 ) {
@@ -54,7 +57,7 @@ fun ProfileScreen(
         bottomBar = {
             CustomBottomNavBar(
                 onHomeClick = onHomeClick,
-                onScanClick = onScanClick,
+                onScanClick = onReadNFCClick,
                 onProfileClick = onProfileClick
             )
         }
@@ -70,7 +73,10 @@ fun ProfileScreen(
                 modifier = Modifier.padding(all = 20.dp),
                 onNavigateToProfileDetail = onNavigateToProfileDetail
             )
-            ElevatedCard(colors = CardDefaults.elevatedCardColors(Color.White)) {
+            ElevatedCard(
+                colors = CardDefaults.elevatedCardColors(Color.White),
+                elevation = CardDefaults.elevatedCardElevation(5.dp)
+            ) {
                 Column(
                     modifier = Modifier.padding(top = 20.dp)
                 ) {
@@ -110,10 +116,12 @@ fun ProfileScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Text("Lihat Selengkapnya / Edit Profil")
+                            Text("Lihat Selengkapnya / Edit Profil", fontSize = 14.sp)
+                            Spacer(Modifier.width(5.dp))
                             Icon(
                                 imageVector = Icons.Default.ArrowForward,
-                                contentDescription = "Arrow Right"
+                                contentDescription = "Arrow Right",
+                                Modifier.size(14.dp)
                             )
                         }
                     }
@@ -140,7 +148,7 @@ fun ProfileScreen(
 private fun ProfileScreenPreview() {
     ProfileScreen(
         onHomeClick = {},
-        onScanClick = {},
+        onReadNFCClick = {},
         onProfileClick = {},
         onNavigateToProfileDetail = {}
     )

@@ -28,6 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import okhttp3.internal.wait
 
+
+//Username Card
+//kalo ga diisi onNavigate jadi transparan + gabisa diklik
 @Composable
 fun UsernameCard(
     modifier: Modifier = Modifier,
@@ -54,13 +57,13 @@ fun UsernameCard(
         elevation = cardElevation,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                if (onNavigateToProfileDetail == null) {
-
+            .then(
+                if (onNavigateToProfileDetail != null) {
+                    Modifier.clickable { onNavigateToProfileDetail() }
                 } else {
-                    onNavigateToProfileDetail()
+                    Modifier // tidak ada clickable
                 }
-            }
+            )
     ) {
         Row(
             modifier = modifier,

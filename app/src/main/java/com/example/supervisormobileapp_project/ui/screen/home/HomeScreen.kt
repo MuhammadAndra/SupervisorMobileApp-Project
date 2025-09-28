@@ -1,21 +1,15 @@
 package com.example.supervisormobileapp_project.ui.screen.home
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,9 +17,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -42,14 +33,14 @@ import com.example.supervisormobileapp_project.ui.components.UsernameCard
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onHomeClick: () -> Unit,
-    onScanClick: () -> Unit,
+    onReadNFCClick: () -> Unit,
     onProfileClick: () -> Unit
 ) {
     Scaffold(
         bottomBar = {
             CustomBottomNavBar(
                 onHomeClick = onHomeClick,
-                onScanClick = onScanClick,
+                onScanClick = onReadNFCClick,
                 onProfileClick = onProfileClick
             )
         }
@@ -59,7 +50,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(15.dp),
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(start = 20.dp,end= 20.dp, top = 15.dp)
+                .padding(start = 20.dp, end= 20.dp, top = 15.dp)
         ) {
             UsernameCard()
             LazyColumn(
@@ -79,7 +70,7 @@ fun HomeScreen(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(onHomeClick = {}, onScanClick = {}, onProfileClick = {})
+    HomeScreen(onHomeClick = {}, onReadNFCClick = {}, onProfileClick = {})
 }
 
 @Composable
@@ -106,7 +97,6 @@ fun CompanyCard(modifier: Modifier = Modifier) {
                     .clip(RoundedCornerShape(8.dp))
             )
             Column {
-
                 Text(
                     "Fakultas Ilmu Komputer Universitas Brawijaya",
                     fontWeight = FontWeight.Medium,

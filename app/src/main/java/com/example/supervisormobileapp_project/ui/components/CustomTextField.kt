@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+//custom text field
+//kalo ga diisi onValueChange berarti read only
 @Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,
@@ -28,7 +30,6 @@ fun CustomTextField(
     onValueChange: ((String) -> Unit)? = null,
     label: String
 ) {
-
     TextField(
         value = value,
         textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium,),
