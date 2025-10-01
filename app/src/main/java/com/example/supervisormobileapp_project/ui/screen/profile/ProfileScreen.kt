@@ -106,7 +106,7 @@ fun ProfileScreen(
                     }
                     Box(
                         modifier = Modifier
-                            .clickable {},
+                            .clickable {onNavigateToProfileDetail()},
                         contentAlignment = Alignment.Center
                     ) {
                         Row(

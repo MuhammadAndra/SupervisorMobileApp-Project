@@ -39,7 +39,7 @@ fun CustomButton(
     endingImageVector: ImageVector? = null
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 shape = RoundedCornerShape(8.dp),
                 color = color

@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.example.supervisormobileapp_project.ui.screen.edit_profile.EditProfile
 import com.example.supervisormobileapp_project.ui.screen.home.HomeScreen
 import com.example.supervisormobileapp_project.ui.screen.profile.ProfileScreen
 import com.example.supervisormobileapp_project.ui.screen.scan.ReadNFCScreen
@@ -47,8 +48,11 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 navController.navigate(ReadNFC)
             },
             onProfileClick = {},
-            onNavigateToProfileDetail = {}
+            onNavigateToProfileDetail = {navController.navigate(EditProfile)}
         )
+    }
+    composable<EditProfile> {
+        EditProfile(onBackClick = { navController.popBackStack() })
     }
 
     composable<ReadNFC> {

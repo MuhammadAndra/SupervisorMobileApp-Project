@@ -41,6 +41,7 @@ fun ReadNFCScreen(
     onProfileClick: () -> Unit
 ) {
     var reading by remember { mutableStateOf(true) }
+
     var location by remember { mutableStateOf("GKM FILKOM UB Lantai 1") }
     var address by remember { mutableStateOf("Ruang A1 No.19, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145") }
     var latitude by remember { mutableStateOf("-7.954699677098358") }
