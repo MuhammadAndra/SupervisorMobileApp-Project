@@ -40,9 +40,9 @@ import com.example.supervisormobileapp_project.ui.components.UsernameCard
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    onHomeClick: () -> Unit,
-    onReadNFCClick: () -> Unit,
-    onProfileClick: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    onNavigateToReadNFC: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     onNavigateToProfileDetail: () -> Unit
 ) {
     var nickName by remember { mutableStateOf("Budi") }
@@ -56,9 +56,9 @@ fun ProfileScreen(
         },
         bottomBar = {
             CustomBottomNavBar(
-                onHomeClick = onHomeClick,
-                onScanClick = onReadNFCClick,
-                onProfileClick = onProfileClick
+                onHomeClick = onNavigateToHome,
+                onScanClick = onNavigateToReadNFC,
+                onProfileClick = onNavigateToProfile
             )
         }
     ) { innerPadding ->
@@ -147,9 +147,9 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreenPreview() {
     ProfileScreen(
-        onHomeClick = {},
-        onReadNFCClick = {},
-        onProfileClick = {},
+        onNavigateToHome = {},
+        onNavigateToReadNFC = {},
+        onNavigateToProfile = {},
         onNavigateToProfileDetail = {}
     )
 }

@@ -25,29 +25,32 @@ object ReadNFC
 fun NavGraphBuilder.mainGraph(navController: NavController) {
     composable<Home> {
         HomeScreen(
-            onHomeClick = {},
-            onReadNFCClick = {
+            onNavigateToHome = {},
+            onNavigateToReadNFC = {
                 navController.popBackStack()
                 navController.navigate(ReadNFC)
             },
-            onProfileClick = {
+            onNavigateToProfile = {
                 navController.popBackStack()
                 navController.navigate(Profile)
+            },
+            onNavigateToPatrolList = { id->
+                navController.navigate(PatrolList(id = id))
             }
         )
     }
 
     composable<Profile> {
         ProfileScreen(
-            onHomeClick = {
+            onNavigateToHome = {
                 navController.popBackStack()
                 navController.navigate(Home)
             },
-            onReadNFCClick = {
+            onNavigateToReadNFC = {
                 navController.popBackStack()
                 navController.navigate(ReadNFC)
             },
-            onProfileClick = {},
+            onNavigateToProfile = {},
             onNavigateToProfileDetail = {navController.navigate(EditProfile)}
         )
     }
@@ -57,12 +60,12 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
 
     composable<ReadNFC> {
         ReadNFCScreen(
-            onHomeClick = {
+            onNavigateToHome = {
                 navController.popBackStack()
                 navController.navigate(Home)
             },
-            onReadNFCClick = {},
-            onProfileClick = {
+            onNavigateToReadNFC = {},
+            onNavigateToProfile = {
                 navController.popBackStack()
                 navController.navigate(Profile)
             },

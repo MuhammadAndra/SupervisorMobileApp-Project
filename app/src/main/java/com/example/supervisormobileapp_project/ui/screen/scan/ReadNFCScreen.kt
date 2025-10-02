@@ -1,18 +1,13 @@
 package com.example.supervisormobileapp_project.ui.screen.scan
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Contactless
 import androidx.compose.material.icons.outlined.Contactless
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -36,9 +31,9 @@ import com.example.supervisormobileapp_project.ui.components.CustomTextField
 @Composable
 fun ReadNFCScreen(
     modifier: Modifier = Modifier,
-    onHomeClick: () -> Unit,
-    onReadNFCClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onNavigateToHome: () -> Unit,
+    onNavigateToReadNFC: () -> Unit,
+    onNavigateToProfile: () -> Unit
 ) {
     var reading by remember { mutableStateOf(true) }
 
@@ -59,9 +54,9 @@ fun ReadNFCScreen(
         },
         bottomBar = {
             CustomBottomNavBar(
-                onHomeClick = onHomeClick,
-                onScanClick = onReadNFCClick,
-                onProfileClick = onProfileClick
+                onHomeClick = onNavigateToHome,
+                onScanClick = onNavigateToReadNFC,
+                onProfileClick = onNavigateToProfile
             )
         }
     ) { innerPadding ->
@@ -150,5 +145,5 @@ private fun NFCTagData(
 @Preview
 @Composable
 private fun ScanNFCScreenPreview() {
-    ReadNFCScreen(onHomeClick = {}, onReadNFCClick = {}, onProfileClick = {})
+    ReadNFCScreen(onNavigateToHome = {}, onNavigateToReadNFC = {}, onNavigateToProfile = {})
 }

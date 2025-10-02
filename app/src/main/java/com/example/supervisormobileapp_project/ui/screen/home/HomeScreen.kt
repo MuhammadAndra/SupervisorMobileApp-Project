@@ -1,5 +1,6 @@
 package com.example.supervisormobileapp_project.ui.screen.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,16 +33,17 @@ import com.example.supervisormobileapp_project.ui.components.UsernameCard
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onHomeClick: () -> Unit,
-    onReadNFCClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onNavigateToHome: () -> Unit,
+    onNavigateToReadNFC: () -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToPatrolList: (Int) -> Unit
 ) {
     Scaffold(
         bottomBar = {
             CustomBottomNavBar(
-                onHomeClick = onHomeClick,
-                onScanClick = onReadNFCClick,
-                onProfileClick = onProfileClick
+                onHomeClick = onNavigateToHome,
+                onScanClick = onNavigateToReadNFC,
+                onProfileClick = onNavigateToProfile
             )
         }
     ) { innerPadding ->
@@ -50,7 +52,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(15.dp),
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(start = 20.dp, end= 20.dp, top = 15.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 15.dp)
         ) {
             UsernameCard()
             LazyColumn(
@@ -58,8 +60,12 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
 
-                items(count = 10) {
-                    CompanyCard()
+                items(count = 10) { count ->
+                    CompanyCard(
+                        modifier = Modifier.clickable {
+                            onNavigateToPatrolList(count)
+                        }
+                    )
                 }
                 item {}
             }
@@ -70,14 +76,17 @@ fun HomeScreen(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(onHomeClick = {}, onReadNFCClick = {}, onProfileClick = {})
+    HomeScreen(
+        onNavigateToHome = {},
+        onNavigateToReadNFC = {},
+        onNavigateToProfile = {},
+        onNavigateToPatrolList = {})
 }
 
 @Composable
 fun CompanyCard(modifier: Modifier = Modifier) {
     ElevatedCard(
-        onClick = {},
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(5.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
