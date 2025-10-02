@@ -4,22 +4,32 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.example.supervisormobileapp_project.ui.screen.add_edit_patrol_spot.AddEditPatrolSpotScreen
 import com.example.supervisormobileapp_project.ui.screen.patrol_list.PatrolListScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PatrolList(val id:Int)
+data class PatrolList(val id: Int)
 
 @Serializable
 data class AddEditPatrol(val id: Int?)
 
 fun NavGraphBuilder.patrolSpotGraph(navController: NavController) {
-    composable<PatrolList> { backStackEntry->
+    composable<PatrolList> { backStackEntry ->
         val patrolList = backStackEntry.toRoute<PatrolList>()
         PatrolListScreen(
             id = patrolList.id,
             onBackClick = { navController.popBackStack() },
-            onNavigateToAddEditPatrol = { id -> AddEditPatrol(id) }
+            onNavigateToAddEditPatrol = { id ->
+                navController.navigate(AddEditPatrol(id))
+            }
+        )
+    }
+    composable<AddEditPatrol> { backStackEntry ->
+        val addEditPatrol = backStackEntry.toRoute<AddEditPatrol>()
+        AddEditPatrolSpotScreen(
+            id = addEditPatrol.id,
+            onBackClick = { navController.popBackStack() },
         )
     }
 }

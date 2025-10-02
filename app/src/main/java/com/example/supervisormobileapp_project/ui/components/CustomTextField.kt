@@ -28,9 +28,11 @@ fun CustomTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: ((String) -> Unit)? = null,
-    label: String
+    label: String,
+    trailingIcon: @Composable() (() -> Unit)? = null,
 ) {
     TextField(
+        modifier = Modifier.fillMaxWidth(),
         value = value,
         textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium,),
         onValueChange = {
@@ -40,8 +42,7 @@ fun CustomTextField(
         },
         readOnly = onValueChange == null,
         label = { Text(label) },
-        modifier = Modifier
-            .fillMaxWidth(),
+        trailingIcon = trailingIcon,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,   // background saat fokus
             unfocusedContainerColor = Color.White, // background saat tidak fokus
