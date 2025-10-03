@@ -51,7 +51,8 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 navController.navigate(ReadNFC)
             },
             onNavigateToProfile = {},
-            onNavigateToProfileDetail = {navController.navigate(EditProfile)}
+            onNavigateToProfileDetail = {navController.navigate(EditProfile)},
+            onNavigateToLogin = {navController.navigate(Login)}
         )
     }
     composable<EditProfile> {

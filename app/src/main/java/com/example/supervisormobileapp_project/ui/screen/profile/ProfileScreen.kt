@@ -43,7 +43,8 @@ fun ProfileScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToReadNFC: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToProfileDetail: () -> Unit
+    onNavigateToProfileDetail: () -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     var nickName by remember { mutableStateOf("Budi") }
     var nip by remember { mutableStateOf("1954628756123679564") }
@@ -106,7 +107,7 @@ fun ProfileScreen(
                     }
                     Box(
                         modifier = Modifier
-                            .clickable {onNavigateToProfileDetail()},
+                            .clickable { onNavigateToProfileDetail() },
                         contentAlignment = Alignment.Center
                     ) {
                         Row(
@@ -116,7 +117,10 @@ fun ProfileScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Text("Lihat Selengkapnya / Edit Profil", fontSize = 14.sp)
+                            Text(
+                                "Lihat Selengkapnya / Edit Profil",
+                                fontSize = 14.sp
+                            )
                             Spacer(Modifier.width(5.dp))
                             Icon(
                                 imageVector = Icons.Default.ArrowForward,
@@ -135,7 +139,7 @@ fun ProfileScreen(
                 endingImageVector = Icons.Default.ArrowForwardIos
             )
             CustomButton(
-                onClick = {},
+                onClick = {onNavigateToLogin()},
                 color = Color(0XFFE25C5C),
                 text = "Logout",
             )
@@ -150,6 +154,7 @@ private fun ProfileScreenPreview() {
         onNavigateToHome = {},
         onNavigateToReadNFC = {},
         onNavigateToProfile = {},
-        onNavigateToProfileDetail = {}
+        onNavigateToProfileDetail = {},
+        onNavigateToLogin = {}
     )
 }
