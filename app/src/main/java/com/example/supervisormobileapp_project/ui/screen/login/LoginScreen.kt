@@ -1,4 +1,4 @@
-package com.example.supervisormobileapp_project.ui.screen
+package com.example.supervisormobileapp_project.ui.screen.login
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,7 +31,6 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     onNavigateToChangePassword: () -> Unit,
     onNavigateToHome: () -> Unit
-
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -80,7 +78,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                modifier = Modifier.clickable { onNavigateToChangePassword() },
+                modifier = Modifier.clickable { onNavigateToChangePassword() }.padding(all = 5.dp),
                 text = "Ubah Password",
                 fontSize = 14.sp,
                 style = TextStyle(

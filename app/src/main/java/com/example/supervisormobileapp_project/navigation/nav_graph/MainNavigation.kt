@@ -34,7 +34,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 navController.popBackStack()
                 navController.navigate(Profile)
             },
-            onNavigateToPatrolList = { id->
+            onNavigateToPatrolList = { id ->
                 navController.navigate(PatrolList(id = id))
             }
         )
@@ -51,8 +51,9 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 navController.navigate(ReadNFC)
             },
             onNavigateToProfile = {},
-            onNavigateToProfileDetail = {navController.navigate(EditProfile)},
-            onNavigateToLogin = {navController.navigate(Login)}
+            onNavigateToProfileDetail = { navController.navigate(EditProfile) },
+            onNavigateToLogin = { navController.navigate(Login) },
+            onNavigateToChangePassword = { navController.navigate(OTP) }
         )
     }
     composable<EditProfile> {

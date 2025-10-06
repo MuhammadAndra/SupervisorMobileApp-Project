@@ -44,7 +44,8 @@ fun ProfileScreen(
     onNavigateToReadNFC: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToProfileDetail: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToChangePassword: () -> Unit
 ) {
     var nickName by remember { mutableStateOf("Budi") }
     var nip by remember { mutableStateOf("1954628756123679564") }
@@ -132,7 +133,7 @@ fun ProfileScreen(
                 }
             }
             CustomButton(
-                onClick = {},
+                onClick = {onNavigateToChangePassword()},
                 color = Color(0XFF3F845F),
                 text = "Ganti Password",
                 leadingImageVector = Icons.Default.Password,
@@ -155,6 +156,7 @@ private fun ProfileScreenPreview() {
         onNavigateToReadNFC = {},
         onNavigateToProfile = {},
         onNavigateToProfileDetail = {},
-        onNavigateToLogin = {}
+        onNavigateToLogin = {},
+        onNavigateToChangePassword = {}
     )
 }
