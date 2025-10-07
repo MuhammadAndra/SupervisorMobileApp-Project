@@ -30,7 +30,7 @@ fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
     var religion by remember { mutableStateOf("Islam") }
     var address by remember { mutableStateOf("Jl. Simpang Bermuda No.1 Malang") }
 
-    fun onSaveChanges(){
+    fun onSaveChanges() {
 
     }
 
@@ -43,7 +43,9 @@ fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
             )
         },
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(top = 20.dp)) {
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .padding(top = 20.dp)) {
             CustomTextField(
                 value = fullName,
                 onValueChange = { fullName = it },
@@ -92,7 +94,10 @@ fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
             Spacer(Modifier.height(20.dp))
             CustomButton(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                onClick = {onSaveChanges()},
+                onClick = {
+                    onSaveChanges()
+                    onBackClick()
+                },
                 text = "Simpan Perubahan",
                 color = Color(0xff3F845F)
             )
