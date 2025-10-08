@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CardDefaults
@@ -17,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,9 +62,10 @@ fun PatrolListScreen(
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(all = 20.dp),
+                .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            item {  }
             items(count = 10) { count ->
                 PatrolListCard(
                     modifier = Modifier.clickable {
@@ -72,6 +75,7 @@ fun PatrolListScreen(
                     }
                 )
             }
+            item {  }
         }
 
     }
@@ -86,9 +90,11 @@ private fun PatrolSpotScreenPreview() {
 @Composable
 fun PatrolListCard(modifier: Modifier = Modifier) {
     ElevatedCard(
-        modifier = modifier,
-        elevation = CardDefaults.elevatedCardElevation(5.dp)
-    ) {
+        modifier = modifier.fillMaxWidth(),
+        elevation = CardDefaults.elevatedCardElevation(5.dp),
+        colors = CardDefaults.elevatedCardColors(Color.White),
+        shape = RoundedCornerShape(8.dp),
+        ) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)

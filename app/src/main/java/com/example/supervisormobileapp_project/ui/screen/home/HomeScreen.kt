@@ -18,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -87,6 +88,7 @@ private fun HomeScreenPreview() {
 fun CompanyCard(modifier: Modifier = Modifier) {
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(Color.White),
         elevation = CardDefaults.cardElevation(5.dp),
         shape = RoundedCornerShape(8.dp)
     ) {

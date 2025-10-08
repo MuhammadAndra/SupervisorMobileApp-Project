@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Contactless
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,10 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.supervisormobileapp_project.ui.components.CustomButton
+import com.example.supervisormobileapp_project.ui.components.CustomDialog
 import com.example.supervisormobileapp_project.ui.components.CustomOutlinedTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +42,8 @@ fun ChangePasswordScreen(
 ) {
     var password by remember { mutableStateOf("") }
     var confPassword by remember { mutableStateOf("") }
+
+    var openDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -96,9 +103,51 @@ fun ChangePasswordScreen(
             }
 
             CustomButton(
-                onClick = { onNavigateToLogin() },
+                onClick = { openDialog = true },
                 text = "Perbarui",
                 color = Color(0xff3F845F)
+            )
+        }
+    }
+    when{
+        openDialog -> {
+            CustomDialog(
+                onDismissRequest = {
+                    openDialog = false
+                    onNavigateToLogin()
+                },
+                title = {
+                    Text(
+                        text = "Pembaruan Password Berhasil",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = Icons.Outlined.CheckCircle,
+                        contentDescription = "Icon CheckCircle",
+                        tint = Color(0xff3F845F)
+                    )
+                    Text(
+                        text = "Silahkan Login Kembali",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        color = Color(0xff3F845F),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                dismissButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Tutup",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                }
             )
         }
     }

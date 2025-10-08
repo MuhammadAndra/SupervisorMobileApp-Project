@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Contactless
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -21,11 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
+import com.example.supervisormobileapp_project.ui.components.CustomDialog
 import com.example.supervisormobileapp_project.ui.components.CustomTextField
 
 @Composable
@@ -35,7 +39,7 @@ fun ReadNFCScreen(
     onNavigateToReadNFC: () -> Unit,
     onNavigateToProfile: () -> Unit
 ) {
-    var reading by remember { mutableStateOf(true) }
+    var reading by remember { mutableStateOf(false) }
 
     var location by remember { mutableStateOf("GKM FILKOM UB Lantai 1") }
     var address by remember { mutableStateOf("Ruang A1 No.19, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145") }
@@ -44,6 +48,8 @@ fun ReadNFCScreen(
     var description by remember { mutableStateOf("Ad ut voluptatem ut qui rerum qui illum. Earum quia exercitationem exercitationem voluptas tempore aliquid. Ad ullam dolorum id. Voluptatem facere aut quia sed dignissimos quae.") }
     var nfcTagUid by remember { mutableStateOf("32:B6:DA:1C") }
     var addressedSupervisor by remember { mutableStateOf("112.61444010123617") }
+
+    var openDialog by remember { mutableStateOf(!reading) }
 
     Scaffold(
         topBar = {
@@ -99,6 +105,47 @@ fun ReadNFCScreen(
             }
         }
     }
+    when{
+        openDialog -> {
+            CustomDialog(
+                onDismissRequest = {
+                    openDialog = false
+                },
+                title = {
+                    Text(
+                        text = "Read NFC Tag",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = Icons.Outlined.Cancel,
+                        contentDescription = "Icon Cancel",
+                        tint = Color(0xffE25C5C)
+                    )
+                    Text(
+                        text = "NFC Tag Tidak Terdeteksi",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        color = Color(0xffE25C5C),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                dismissButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Tutup",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -145,5 +192,8 @@ private fun NFCTagData(
 @Preview
 @Composable
 private fun ScanNFCScreenPreview() {
-    ReadNFCScreen(onNavigateToHome = {}, onNavigateToReadNFC = {}, onNavigateToProfile = {})
+    ReadNFCScreen(
+        onNavigateToHome = {},
+        onNavigateToReadNFC = {},
+        onNavigateToProfile = {})
 }

@@ -23,12 +23,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 
 @Composable
 fun CustomDialog(
@@ -43,13 +45,12 @@ fun CustomDialog(
     Dialog(
         onDismissRequest = { onDismissRequest() },
         properties = DialogProperties(usePlatformDefaultWidth = false)
+
     ) {
         Card(
-            elevation = CardDefaults.cardElevation(5.dp),
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .background(color = Color.White)
+            modifier = Modifier.fillMaxWidth(0.9f),
+            elevation = CardDefaults.cardElevation(5.dp),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,

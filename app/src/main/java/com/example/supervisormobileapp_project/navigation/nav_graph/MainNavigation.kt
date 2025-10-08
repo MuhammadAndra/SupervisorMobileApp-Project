@@ -32,7 +32,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
             onNavigateToHome = {},
             onNavigateToReadNFC = {
                 navController.popBackStack()
-                navController.navigate(TestDialog)
+                navController.navigate(ReadNFC)
             },
             onNavigateToProfile = {
                 navController.popBackStack()
