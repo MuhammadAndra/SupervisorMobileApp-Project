@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -24,9 +27,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.example.supervisormobileapp_project.data.model.Company
+import com.example.supervisormobileapp_project.data.model.companyList
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.OvalBackground
 import com.example.supervisormobileapp_project.ui.components.UsernameCard
@@ -39,6 +46,13 @@ fun HomeScreen(
     onNavigateToProfile: () -> Unit,
     onNavigateToPatrolList: (Int) -> Unit
 ) {
+    val vm: HomeViewmodel = viewModel()
+    val companies by vm.companies.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        vm.getCompanies()
+    }
+
     Scaffold(
         bottomBar = {
             CustomBottomNavBar(
@@ -55,17 +69,20 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .padding(start = 20.dp, end = 20.dp, top = 15.dp)
         ) {
-            UsernameCard()
+            //MASIH HARDCODE
+            UsernameCard(fullName = "Budi Setiawan", position = "Supervisor")
             LazyColumn(
                 modifier = Modifier,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-
-                items(count = 10) { count ->
+                items(companies) { company ->
                     CompanyCard(
+                        company = company,
                         modifier = Modifier.clickable {
-                            onNavigateToPatrolList(count)
-                        }
+                            onNavigateToPatrolList(
+                                company.id
+                            )
+                        },
                     )
                 }
                 item {}
@@ -85,7 +102,7 @@ private fun HomeScreenPreview() {
 }
 
 @Composable
-fun CompanyCard(modifier: Modifier = Modifier) {
+fun CompanyCard(modifier: Modifier = Modifier, company: Company) {
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.elevatedCardColors(Color.White),
@@ -98,10 +115,10 @@ fun CompanyCard(modifier: Modifier = Modifier) {
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtoRD2IW8OpUHuzrPbXKj9E28d-DWZhPBJLRUP2H9rKpLbKAsnDpD9ViWdTXwBdCThRzo&usqp=CAU")
+                    .data(company.logo)
                     .crossfade(true)
                     .build(),
-                contentDescription = "Gambar Menu",
+                contentDescription = "Gambar Perusahaan",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .size(80.dp)
@@ -109,12 +126,12 @@ fun CompanyCard(modifier: Modifier = Modifier) {
             )
             Column {
                 Text(
-                    "Fakultas Ilmu Komputer Universitas Brawijaya",
+                    text = company.name,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp,
                 )
                 Text(
-                    "Ruang A1 No.19, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Tim..",
+                    text = company.address,
                     fontWeight = FontWeight.Medium,
                     fontSize = 12.sp,
                     maxLines = 2,
@@ -128,5 +145,12 @@ fun CompanyCard(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun CompanyCardPreview() {
-    CompanyCard()
+    CompanyCard(
+        company = Company(
+            id = 1,
+            name = "Fakultas Ilmu Komputer Universitas Brawijaya",
+            address = "Ruang A1 No.19, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur",
+            logo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtoRD2IW8OpUHuzrPbXKj9E28d-DWZhPBJLRUP2H9rKpLbKAsnDpD9ViWdTXwBdCThRzo&usqp=CAU"
+        )
+    )
 }

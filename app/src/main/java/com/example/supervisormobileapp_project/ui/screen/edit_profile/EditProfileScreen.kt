@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,24 +15,59 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.supervisormobileapp_project.data.model.Supervisor
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomButton
 import com.example.supervisormobileapp_project.ui.components.CustomTextField
+import com.example.supervisormobileapp_project.ui.screen.profile.ProfileViewModel
 
 @Composable
 fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
-    var fullName by remember { mutableStateOf("Budi Setiawan") }
-    var nickName by remember { mutableStateOf("Budi") }
-    var nip by remember { mutableStateOf("1954628756123679564") }
-    var jobStatus by remember { mutableStateOf("Contract") }
-    var position by remember { mutableStateOf("Supervisor") }
-    var department by remember { mutableStateOf("IT") }
-    var gender by remember { mutableStateOf("Male") }
-    var religion by remember { mutableStateOf("Islam") }
-    var address by remember { mutableStateOf("Jl. Simpang Bermuda No.1 Malang") }
+
+    val vm: ProfileViewModel = viewModel()
+    val supervisor = vm.supervisor.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        vm.getSupervisor()
+    }
+    var fullName by remember { mutableStateOf("") }
+    var position by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf("") }
+    var nip by remember { mutableStateOf("") }
+    var jobStatus by remember { mutableStateOf("") }
+    var department by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("") }
+    var religion by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+
+    LaunchedEffect(supervisor.value) {
+        supervisor.value?.let {
+            fullName = it.fullName
+            position = it.position
+            nickname = it.nickname
+            nip = it.nip
+            jobStatus = it.jobStatus
+            department = it.department
+            gender = it.gender
+            religion = it.religion
+            address = it.address
+        }
+    }
+
 
     fun onSaveChanges() {
-
+        vm.editSupervisorData(Supervisor(
+            fullName = fullName,
+            nickname = nickname,
+            nip = nip,
+            jobStatus = jobStatus,
+            position = position,
+            department = department,
+            gender = gender,
+            religion = religion,
+            address = address
+        ))
     }
 
     Scaffold(
@@ -52,8 +88,8 @@ fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
                 label = "Nama Lengkap"
             )
             CustomTextField(
-                value = nickName,
-                onValueChange = { nickName = it },
+                value = nickname,
+                onValueChange = { nickname = it },
                 label = "Nama Panggilan"
             )
             CustomTextField(
@@ -63,17 +99,14 @@ fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
             )
             CustomTextField(
                 value = jobStatus,
-                onValueChange = { jobStatus = it },
                 label = "Status Kerja"
             )
             CustomTextField(
                 value = position,
-                onValueChange = { position = it },
                 label = "Jabatan"
             )
             CustomTextField(
                 value = department,
-                onValueChange = { department = it },
                 label = "Departemen"
             )
             CustomTextField(

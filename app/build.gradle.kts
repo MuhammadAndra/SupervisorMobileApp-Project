@@ -52,18 +52,26 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    //navigation
     implementation("androidx.navigation:navigation-compose:2.8.9")
     implementation("androidx.navigation:navigation-ui-ktx:2.8.9")
 
+    //api
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
+    //icon
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
+    //image loading
     implementation("io.coil-kt.coil3:coil-compose:3.2.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0")
+
+    //data store
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
 
     testImplementation(libs.junit)

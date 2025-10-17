@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.GppMaybe
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -25,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +36,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.CustomButton
@@ -55,12 +56,29 @@ fun ProfileScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToChangePassword: () -> Unit
 ) {
-    var nickName by remember { mutableStateOf("Budi") }
-    var nip by remember { mutableStateOf("1954628756123679564") }
-    var jobStatus by remember { mutableStateOf("Contract") }
-    var department by remember { mutableStateOf("IT") }
+    val vm: ProfileViewModel = viewModel()
+    val supervisor = vm.supervisor.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        vm.getSupervisor()
+    }
+    var fullName by remember { mutableStateOf("") }
+    var position by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf("") }
+    var nip by remember { mutableStateOf("") }
+    var jobStatus by remember { mutableStateOf("") }
+    var department by remember { mutableStateOf("") }
     var openDialog by remember { mutableStateOf(false) }
 
+    LaunchedEffect(supervisor.value) {
+        supervisor.value?.let {
+            fullName = it.fullName
+            position = it.position
+            nickname = it.nickname
+            nip = it.nip
+            jobStatus = it.jobStatus
+            department = it.department
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -83,6 +101,8 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             UsernameCard(
+                fullName = fullName,
+                position = position,
                 modifier = Modifier.padding(all = 20.dp),
                 onNavigateToProfileDetail = onNavigateToProfileDetail
             )
@@ -97,7 +117,7 @@ fun ProfileScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         CustomTextField(
-                            value = nickName,
+                            value = nickname,
                             //onValueChange = { nickName = it },
                             label = "Nama Panggilan"
                         )
@@ -183,7 +203,7 @@ fun ProfileScreen(
                     Text(
                         text = "Anda harus memasukkan email dan password lagi jika ingin login",
                         fontWeight = FontWeight.Medium,
-                        fontSize =18.sp,
+                        fontSize = 18.sp,
                         color = Color(0xffE25C5C),
                         textAlign = TextAlign.Center
                     )

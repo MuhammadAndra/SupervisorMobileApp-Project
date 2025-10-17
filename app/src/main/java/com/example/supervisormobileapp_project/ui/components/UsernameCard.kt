@@ -33,6 +33,8 @@ import okhttp3.internal.wait
 //kalo ga diisi onNavigate jadi transparan + gabisa diklik
 @Composable
 fun UsernameCard(
+    fullName:String,
+    position:String,
     modifier: Modifier = Modifier,
     onNavigateToProfileDetail: (() -> Unit)? = null,
 ) {
@@ -89,13 +91,13 @@ fun UsernameCard(
             }
             Column {
                 Text(
-                    "Budi Setiawan",
+                    fullName,
                     color = if (onNavigateToProfileDetail == null) Color.White else Color.Black,
                     fontWeight = FontWeight.Medium,
                     fontSize = 22.sp
                 )
                 Text(
-                    "Supervisor",
+                    position,
                     color = if (onNavigateToProfileDetail == null) Color.White else Color.Black,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp
@@ -108,5 +110,5 @@ fun UsernameCard(
 @Preview
 @Composable
 private fun UserNameCardPreview() {
-    UsernameCard()
+    UsernameCard(fullName = "Budi Setiawan", position = "Supervisor")
 }

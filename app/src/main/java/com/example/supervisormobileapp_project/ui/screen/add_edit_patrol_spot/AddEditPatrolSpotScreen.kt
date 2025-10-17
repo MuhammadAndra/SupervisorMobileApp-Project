@@ -1,5 +1,6 @@
 package com.example.supervisormobileapp_project.ui.screen.add_edit_patrol_spot
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomButton
 import com.example.supervisormobileapp_project.ui.components.CustomDialog
@@ -38,6 +42,15 @@ fun AddEditPatrolSpotScreen(
     id: Int?,
     onBackClick: () -> Unit,
 ) {
+    val vm: EditPatrolSpotViewModel = viewModel()
+    val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        if (id!=null){
+            vm.getPatrolSpotById(id)
+        }
+    }
+
     val isEdit = id != null
     var isMatching = true
     val title = if (isEdit) "Edit" else "Tambah"
@@ -50,12 +63,23 @@ fun AddEditPatrolSpotScreen(
         isMatching = !isMatching
     }
 
-    var locationName by remember { mutableStateOf("Gedung F FILKOM UB Lantai 4") }
-    var address by remember { mutableStateOf("Ruang A1 No.19, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145") }
-    var latitude by remember { mutableStateOf("-7.953928356235202") }
-    var longitude by remember { mutableStateOf("112.61452104116398") }
-    var description by remember { mutableStateOf("Ad ut voluptatem ut qui rerum qui illum. Earum quia exercitationem exercitationem voluptas tempore aliquid. Ad ullam dolorum id. Voluptatem facere aut quia sed dignissimos quae.") }
-    var nfcTagUid by remember { mutableStateOf(if (isEdit) "32:B6:DA:1C" else "-") }
+    var locationName by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var latitude by remember { mutableStateOf("") }
+    var longitude by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var nfcTagUid by remember { mutableStateOf("-") }
+
+    LaunchedEffect(patrolSpot.value) {
+        patrolSpot.value?.let { spot ->
+            locationName = spot.name
+            address = spot.address
+            latitude = spot.latitude
+            longitude = spot.longitude
+            description = spot.description
+            nfcTagUid = spot.uidNfcTag ?: "-"
+        }
+    }
     val buttonTitle = if (isEdit && nfcTagUid != "-") "Verifikasi" else "Tambahkan"
 
     Scaffold(
@@ -88,12 +112,10 @@ fun AddEditPatrolSpotScreen(
                 )
                 CustomTextField(
                     value = latitude,
-                    onValueChange = { latitude = it },
                     label = "Garis Lintang"
                 )
                 CustomTextField(
                     value = longitude,
-                    onValueChange = { longitude = it },
                     label = "Garis Bujur"
                 )
                 CustomTextField(
@@ -102,7 +124,7 @@ fun AddEditPatrolSpotScreen(
                     label = "Deskripsi"
                 )
                 CustomTextField(
-                    value = nfcTagUid,
+                    value = nfcTagUid!!,
                     label = "UID NFC Tag",
                     trailingIcon = {
                         if (nfcTagUid != "-") {
