@@ -61,7 +61,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
         )
     }
     composable<EditProfile> {
-        EditProfile(onBackClick = { navController.popBackStack() })
+        EditProfile(onBackClick = { navController.navigateUp() })
     }
 
     composable<ReadNFC> {

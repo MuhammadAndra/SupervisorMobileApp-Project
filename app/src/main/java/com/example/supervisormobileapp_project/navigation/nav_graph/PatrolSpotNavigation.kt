@@ -19,7 +19,7 @@ fun NavGraphBuilder.patrolSpotGraph(navController: NavController) {
         val patrolList = backStackEntry.toRoute<PatrolList>()
         PatrolListScreen(
             id = patrolList.id,
-            onBackClick = { navController.popBackStack() },
+            onBackClick = { navController.navigateUp() },
             onNavigateToAddEditPatrol = { id ->
                 navController.navigate(AddEditPatrol(id))
             }
@@ -29,7 +29,7 @@ fun NavGraphBuilder.patrolSpotGraph(navController: NavController) {
         val addEditPatrol = backStackEntry.toRoute<AddEditPatrol>()
         AddEditPatrolSpotScreen(
             id = addEditPatrol.id,
-            onBackClick = { navController.popBackStack() },
+            onBackClick = { navController.navigateUp() },
         )
     }
 }

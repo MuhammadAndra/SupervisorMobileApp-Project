@@ -28,13 +28,13 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
     }
     composable<OTP> {
         OTPScreen(
-            onBackClick = { navController.popBackStack() },
+            onBackClick = { navController.navigateUp() },
             onNavigateToChangePassword = { navController.navigate(ChangePass) }
         )
     }
     composable<ChangePass> {
         ChangePasswordScreen(
-            onBackClick = { navController.popBackStack() },
+            onBackClick = { navController.navigateUp() },
             onNavigateToLogin = {
                 navController.popBackStack()
                 navController.navigate(Login)
