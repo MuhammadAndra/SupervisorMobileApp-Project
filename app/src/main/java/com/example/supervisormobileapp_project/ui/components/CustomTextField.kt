@@ -32,7 +32,7 @@ fun CustomTextField(
     trailingIcon: @Composable() (() -> Unit)? = null,
 ) {
     TextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         value = value,
         textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium,),
         onValueChange = {

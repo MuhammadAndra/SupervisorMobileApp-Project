@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
+import com.example.supervisormobileapp_project.data.model.editPatrolSpot
 import com.example.supervisormobileapp_project.data.model.fetchPatrolSpot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,12 @@ class EditPatrolSpotViewModel: ViewModel() {
     fun getPatrolSpotById(id:Int){
         viewModelScope.launch(Dispatchers.IO) {
             _patrolSpot.value = fetchPatrolSpot(id = id)
+        }
+    }
+
+    fun changePatrolSpot(id: Int,newSpot: PatrolSpot){
+        viewModelScope.launch(Dispatchers.IO) {
+            editPatrolSpot(id = id, newSpot = newSpot)
         }
     }
 

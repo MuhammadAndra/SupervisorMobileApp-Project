@@ -49,7 +49,7 @@ fun CustomDialog(
     ) {
         Card(
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth(0.9f),
+            modifier = modifier.fillMaxWidth(0.9f),
             elevation = CardDefaults.cardElevation(5.dp),
         ) {
             Column(

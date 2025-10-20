@@ -12,6 +12,13 @@ fun fetchPatrolSpot(id: Int): PatrolSpot {
     return patrolSpotList.first { it.id == id }
 }
 
+fun editPatrolSpot(id: Int, newSpot: PatrolSpot){
+    val index = patrolSpotList.indexOfFirst { it.id == id }
+    if (index != -1) {
+        patrolSpotList[index] = newSpot
+    }
+}
+
 fun fetchSupervisorData(): Supervisor{
     return dummySupervisor
 }
@@ -21,7 +28,7 @@ fun changeSupervisorData(supervisor: Supervisor){
 }
 
 //list dummy
-val companyList = listOf(
+val companyList = mutableListOf(
     Company(
         id = 1,
         name = "Fakultas Ilmu Komputer Universitas Brawijaya",
@@ -60,7 +67,7 @@ val companyList = listOf(
     )
 )
 
-val patrolSpotList = listOf(
+val patrolSpotList = mutableListOf(
     // Company 1: FILKOM UB
     PatrolSpot(
         companyId = 1,
