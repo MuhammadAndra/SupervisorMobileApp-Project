@@ -53,38 +53,47 @@ fun AddEditPatrolSpotScreen(
     val vm: EditPatrolSpotViewModel = viewModel()
     val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
 
+    //initial data fetching for patrol spot detail
     LaunchedEffect(Unit) {
         if (id != null) {
             vm.getPatrolSpotById(id)
         }
     }
-
+    //not needed
     val isEdit = id != null
+    //verify nfc uid with database
     var isMatching = true
+    //not needed
     val title = if (isEdit) "Edit" else "Tambah"
+    //for reading uid with external nfc reader
     val focusRequester = remember { FocusRequester() }
 
-
+    //open closed dialog
     var openDialogAddNFC by remember { mutableStateOf(false) }
     var openDialogVerifyNFC by remember { mutableStateOf(false) }
     var openDialogDeleteNFC by remember { mutableStateOf(false) }
     var openDialogMatching by remember { mutableStateOf(false) }
     var openDialogVerifyTextField by remember { mutableStateOf(false) }
-    //gagal dibawah ini
+    //not needed failed attempt
     var readOnlyTextField by remember { mutableStateOf(true) }
 
+    //patrol spot detail data
     var locationName by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var nfcTagUid by remember { mutableStateOf("") }
+
+    //used to contain newly scanned nfc tag uid to verify
     var verifyNfcTagUid by remember { mutableStateOf("") }
 
+    //check if patrol spot data from database equal to newly scanned nfc tag
     fun verifyNFC() {
         isMatching = nfcTagUid == verifyNfcTagUid
     }
 
+    //display patrol spot detail data
     LaunchedEffect(patrolSpot.value) {
         patrolSpot.value?.let { spot ->
             locationName = spot.name
@@ -96,6 +105,7 @@ fun AddEditPatrolSpotScreen(
         }
     }
 
+    //check the button usage whether to verify or add nfc tag
     val buttonTitle =
         if (patrolSpot.value?.uidNfcTag != null && nfcTagUid != "") "Verifikasi" else "Tambahkan"
 
@@ -142,9 +152,10 @@ fun AddEditPatrolSpotScreen(
                 )
                 CustomTextField(
                     modifier = Modifier.focusRequester(focusRequester),
-                    value = nfcTagUid!!,
+                    value = nfcTagUid,
                     label = "UID NFC Tag",
                     trailingIcon = {
+                        //if nfc tag uid not null display clear text button
                         if (nfcTagUid != "") {
                             IconButton(
                                 onClick = {
@@ -167,10 +178,11 @@ fun AddEditPatrolSpotScreen(
             ) {
                 CustomButton(
                     onClick = {
-                        //gagal
+                        //failed attempt
 //                        readOnlyTextField = false
 //                        focusRequester.requestFocus()
 //                        openDialogAddVerifyNFC = true
+                        //if dialog from database and local is empty. if not open dialog to verify
                         if (patrolSpot.value?.uidNfcTag != null && nfcTagUid != "") {
                             openDialogVerifyNFC = true
                         } else {
@@ -184,6 +196,7 @@ fun AddEditPatrolSpotScreen(
                 )
                 CustomButton(
                     onClick = {
+                        //check if all the text field already filled
                         if (locationName != "" && address != "" && latitude != "" && longitude != "" && description != "") {
                             vm.changePatrolSpot(
                                 id = id!!, newSpot = PatrolSpot(
@@ -229,7 +242,7 @@ fun AddEditPatrolSpotScreen(
 //                        if (isEdit && nfcTagUid != "-") openDialogMatching =
 //                            true
 //                        else nfcTagUid = "32:B6:DA:1C"
-                        // gagal
+                        // failed attempt
 //                        readOnlyTextField = true
 //                        focusRequester.freeFocus()
                         openDialogAddNFC = false

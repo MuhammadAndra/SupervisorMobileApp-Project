@@ -1,5 +1,6 @@
 package com.example.supervisormobileapp_project.ui.screen.scan
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,12 +22,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.utf16CodePoint
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.CustomDialog
@@ -39,17 +48,16 @@ fun ReadNFCScreen(
     onNavigateToReadNFC: () -> Unit,
     onNavigateToProfile: () -> Unit
 ) {
-    var reading by remember { mutableStateOf(false) }
+    //viewmodel
+    val vm: ReadNFCViewModel = viewModel()
+    val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
 
-    var location by remember { mutableStateOf("GKM FILKOM UB Lantai 1") }
-    var address by remember { mutableStateOf("Ruang A1 No.19, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145") }
-    var latitude by remember { mutableStateOf("-7.954699677098358") }
-    var longitude by remember { mutableStateOf("112.61444010123617") }
-    var description by remember { mutableStateOf("Ad ut voluptatem ut qui rerum qui illum. Earum quia exercitationem exercitationem voluptas tempore aliquid. Ad ullam dolorum id. Voluptatem facere aut quia sed dignissimos quae.") }
-    var nfcTagUid by remember { mutableStateOf("32:B6:DA:1C") }
-    var addressedSupervisor by remember { mutableStateOf("112.61444010123617") }
+    //read uid with external nfc reader
+    var nfcTagUid by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
 
-    var openDialog by remember { mutableStateOf(!reading) }
+    //open dialog to show nfc not showing up in database
+    var openDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -70,18 +78,42 @@ fun ReadNFCScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(vertical = 20.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                //read typing event for external nfc reader
+                .focusRequester(focusRequester)
+                .focusable()
+                .onKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyDown) {
+                        val char = event.utf16CodePoint.toChar()
+                        //if reading nfc uid complete
+                        if (char == '\n') {
+                            vm.getPatrolSpotByNfcUid(nfcTagUid)
+                        } else {
+                            //write nfc uid
+                            nfcTagUid += char
+                        }
+                    }
+                    true // consume event
+                },
         ) {
-            if (reading) {
+            //if success show data
+            if (patrolSpot.value?.status=="success" && patrolSpot.value?.data!=null) {
+                nfcTagUid=""
                 NFCTagData(
-                    longitude = longitude,
-                    location = location,
-                    address = address,
-                    latitude = latitude,
-                    description = description,
-                    nfcTagUid = nfcTagUid
+                    location =  patrolSpot.value?.data?.name?:"",
+                    address = patrolSpot.value?.data?.address?:"",
+                    longitude = patrolSpot.value?.data?.longitude?:"" ,
+                    latitude = patrolSpot.value?.data?.latitude?:"",
+                    description = patrolSpot.value?.data?.description?:"",
+                    nfcTagUid = patrolSpot.value?.data?.uidNfcTag?:"",
                 )
-            } else {
+            //if error show dialog
+            } else if(patrolSpot.value?.status=="error"){
+                openDialog = true
+                nfcTagUid=""
+                vm.clearPatrolSpot()
+            }else {
+                //else show message to scan nfc
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -100,12 +132,12 @@ fun ReadNFCScreen(
                         fontSize = 20.sp,
                         color = Color(0XFF3F845F)
                     )
-
                 }
             }
         }
     }
     when{
+        //alert dialog to show error in nfc uid reading
         openDialog -> {
             CustomDialog(
                 onDismissRequest = {

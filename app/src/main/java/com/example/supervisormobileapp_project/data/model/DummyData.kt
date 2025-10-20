@@ -8,22 +8,37 @@ fun fetchPatrolSpots(companyId: Int): List<PatrolSpot> {
     return patrolSpotList.filter { it.companyId == companyId }
 }
 
-fun fetchPatrolSpot(id: Int): PatrolSpot {
+fun fetchPatrolSpotById(id: Int): PatrolSpot {
     return patrolSpotList.first { it.id == id }
 }
 
-fun editPatrolSpot(id: Int, newSpot: PatrolSpot){
+//fun fetchPatrolSpotByNfcUid(nfcUid: String): PatrolSpot {
+//    return patrolSpotList.first { it.uidNfcTag == nfcUid }
+//}
+
+fun fetchPatrolSpotByNfcUidResponse(nfcUid: String): ReadNFCResponse {
+    val data: PatrolSpot? = patrolSpotList.firstOrNull { it.uidNfcTag == nfcUid }
+    return ReadNFCResponse(
+        status = if (data!=null) "success" else "error",
+        message =  "NFC Tag UID${ if (data!=null) " " else " not "}compatible with database" ,
+        data = data
+
+    )
+}
+
+
+fun editPatrolSpot(id: Int, newSpot: PatrolSpot) {
     val index = patrolSpotList.indexOfFirst { it.id == id }
     if (index != -1) {
         patrolSpotList[index] = newSpot
     }
 }
 
-fun fetchSupervisorData(): Supervisor{
+fun fetchSupervisorData(): Supervisor {
     return dummySupervisor
 }
 
-fun changeSupervisorData(supervisor: Supervisor){
+fun changeSupervisorData(supervisor: Supervisor) {
     dummySupervisor = supervisor
 }
 
@@ -77,7 +92,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.953810836342468",
         longitude = "112.61454711534338",
         description = "Area Lobby dan Kemahasiswaan",
-        uidNfcTag = null,
+        uidNfcTag = "0484095538",
     ),
     PatrolSpot(
         companyId = 1,
