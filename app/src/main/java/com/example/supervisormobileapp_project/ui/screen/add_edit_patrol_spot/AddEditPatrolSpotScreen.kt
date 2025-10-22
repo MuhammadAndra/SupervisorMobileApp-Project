@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.supervisormobileapp_project.NfcReaderViewModel
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomButton
@@ -49,7 +51,12 @@ fun AddEditPatrolSpotScreen(
     modifier: Modifier = Modifier,
     id: Int?,
     onBackClick: () -> Unit,
+    nfcVm: NfcReaderViewModel,
+//    onEnableNfc: () -> Unit,
+//    onDisableNfc: () -> Unit
 ) {
+    val uidHex by nfcVm.uidHex.collectAsState()
+
     val vm: EditPatrolSpotViewModel = viewModel()
     val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
 
@@ -59,10 +66,12 @@ fun AddEditPatrolSpotScreen(
             vm.getPatrolSpotById(id)
         }
     }
+
     //not needed
     val isEdit = id != null
     //verify nfc uid with database
-    var isMatching = true
+//    var isMatching = true
+    var isMatching by remember { mutableStateOf(true) }
     //not needed
     val title = if (isEdit) "Edit" else "Tambah"
     //for reading uid with external nfc reader
@@ -74,8 +83,17 @@ fun AddEditPatrolSpotScreen(
     var openDialogDeleteNFC by remember { mutableStateOf(false) }
     var openDialogMatching by remember { mutableStateOf(false) }
     var openDialogVerifyTextField by remember { mutableStateOf(false) }
+
     //not needed failed attempt
     var readOnlyTextField by remember { mutableStateOf(true) }
+    //not needed
+    LaunchedEffect(openDialogAddNFC || openDialogVerifyNFC) {
+        if (openDialogAddNFC || openDialogVerifyNFC) {
+//            onEnableNfc()
+        } else {
+//            onDisableNfc()
+        }
+    }
 
     //patrol spot detail data
     var locationName by remember { mutableStateOf("") }
@@ -87,6 +105,8 @@ fun AddEditPatrolSpotScreen(
 
     //used to contain newly scanned nfc tag uid to verify
     var verifyNfcTagUid by remember { mutableStateOf("") }
+    //temp var to contain raw nfc uid from external nfc reader
+    var readNfcTagUid by remember { mutableStateOf("") }
 
     //check if patrol spot data from database equal to newly scanned nfc tag
     fun verifyNFC() {
@@ -184,9 +204,13 @@ fun AddEditPatrolSpotScreen(
 //                        openDialogAddVerifyNFC = true
                         //if dialog from database and local is empty. if not open dialog to verify
                         if (patrolSpot.value?.uidNfcTag != null && nfcTagUid != "") {
+                            nfcVm.clearUid()
                             openDialogVerifyNFC = true
+//                            onEnableNfc()
                         } else {
+                            nfcVm.clearUid()
                             openDialogAddNFC = true
+//                            onEnableNfc()
                         }
                     },
                     text = "$buttonTitle NFC Tag",
@@ -220,272 +244,311 @@ fun AddEditPatrolSpotScreen(
                 )
             }
         }
-        when {
-            openDialogAddNFC -> {
-                CustomDialog(
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                        .focusable()
-                        .onKeyEvent { event ->
-                            if (event.type == KeyEventType.KeyDown) {
-                                val char = event.utf16CodePoint.toChar()
-                                // Enter biasanya menandakan akhir input tag
-                                if (char == '\n') {
-                                    openDialogAddNFC = false
-                                } else {
-                                    nfcTagUid += char
-                                }
+
+
+    }
+
+    when {
+        openDialogAddNFC -> {
+            LaunchedEffect(uidHex) {
+                uidHex?.let {
+                    nfcTagUid = it
+                    nfcVm.clearUid()
+                    openDialogAddNFC = false
+//                    onDisableNfc()
+                }
+            }
+            CustomDialog(
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .focusable()
+                    .onKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown) {
+                            val char = event.utf16CodePoint.toChar()
+                            // Enter biasanya menandakan akhir input tag
+                            if (char == '\n') {
+                                openDialogAddNFC = false
+                                nfcTagUid =
+                                    nfcVm.reversedDecimalToHex(readNfcTagUid)
+                                readNfcTagUid = ""
+                            } else {
+//                                nfcTagUid += char
+                                readNfcTagUid += char
                             }
-                            true // consume event
-                        },
-                    onDismissRequest = {
+                        }
+                        true // consume event
+                    },
+                onDismissRequest = {
 //                        if (isEdit && nfcTagUid != "-") openDialogMatching =
 //                            true
 //                        else nfcTagUid = "32:B6:DA:1C"
-                        // failed attempt
+                    // failed attempt
 //                        readOnlyTextField = true
 //                        focusRequester.freeFocus()
-                        openDialogAddNFC = false
-                    },
-                    title = {
-                        Text(
-                            text = "Tambahkan NFC Tag",
-                            color = Color(0xff3F845F),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    },
-                    content = {
-                        Icon(
-                            modifier = Modifier.size(80.dp),
-                            imageVector = Icons.Outlined.Contactless,
-                            contentDescription = "Icon Contactless",
-                            tint = Color(0xff3F845F)
-                        )
-                        Text(
-                            text = "Tempelkan NFC Tag",
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            color = Color(0xff3F845F),
-                            textAlign = TextAlign.Center
-                        )
-                    },
-                    dismissButton = {
-                        Text(
-                            modifier = Modifier.padding(vertical = 20.dp),
-                            text = "Tutup",
-                            color = Color(0xff3F845F),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    }
-                )
-            }
-
-            openDialogVerifyNFC -> {
-                CustomDialog(
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                        .focusable()
-                        .onKeyEvent { event ->
-                            if (event.type == KeyEventType.KeyDown) {
-                                val char = event.utf16CodePoint.toChar()
-                                // Enter biasanya menandakan akhir input tag
-                                if (char == '\n') {
-                                    verifyNFC()
-                                    openDialogMatching = true
-                                    openDialogVerifyNFC = false
-                                } else {
-                                    verifyNfcTagUid += char
-                                }
-                            }
-                            true // consume event
-                        },
-                    onDismissRequest = {
-                        openDialogVerifyNFC = false
-                    },
-                    title = {
-                        Text(
-                            text = "$buttonTitle NFC Tag",
-                            color = Color(0xff3F845F),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    },
-                    content = {
-                        Icon(
-                            modifier = Modifier.size(80.dp),
-                            imageVector = Icons.Outlined.Contactless,
-                            contentDescription = "Icon Contactless",
-                            tint = Color(0xff3F845F)
-                        )
-                        Text(
-                            text = "Tempelkan NFC Tag",
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            color = Color(0xff3F845F),
-                            textAlign = TextAlign.Center
-                        )
-                    },
-                    dismissButton = {
-                        Text(
-                            modifier = Modifier.padding(vertical = 20.dp),
-                            text = "Tutup",
-                            color = Color(0xff3F845F),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    }
-                )
-            }
-
-            openDialogDeleteNFC -> {
-                CustomDialog(
-                    onDismissRequest = {
-                        openDialogDeleteNFC = false
-                    },
-                    onConfirmation = {
-                        nfcTagUid = ""
-                        patrolSpot.value?.uidNfcTag = null
-                        openDialogDeleteNFC = false
-                    },
-                    title = {
-                        Text(
-                            text = "Yakin Hapus Data NFC Tag?",
-                            color = Color(0xffE25C5C),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    },
-                    content = {
-                        Icon(
-                            modifier = Modifier.size(80.dp),
-                            imageVector = Icons.Outlined.Contactless,
-                            contentDescription = "Icon Contactless",
-                            tint = Color(0xffE25C5C)
-                        )
-                        Text(
-                            text = "Anda tidak dapat memulihkan perubahan data",
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            color = Color(0xffE25C5C),
-                            textAlign = TextAlign.Center
-                        )
-                    },
-                    dismissButton = {
-                        Text(
-                            modifier = Modifier.padding(vertical = 20.dp),
-                            text = "Batalkan",
-                            color = Color(0xff3F845F),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    },
-                    confirmButton = {
-                        Text(
-                            modifier = Modifier.padding(vertical = 20.dp),
-                            text = "Hapus",
-                            color = Color(0xffE25C5C),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    }
-                )
-            }
-
-            openDialogMatching -> {
-                CustomDialog(
-                    onDismissRequest = {
-                        openDialogMatching = false
-                        verifyNfcTagUid = ""
-                    },
-                    title = {
-                        Text(
-                            text = if (isMatching) "NFC Tag Sesuai" else "NFC Tag Tidak Sesuai",
-                            color = if (isMatching) Color(0xff3F845F) else Color(
-                                0xffE25C5C
-                            ),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    },
-                    content = {
-                        Icon(
-                            modifier = Modifier.size(80.dp),
-                            imageVector = if (isMatching) Icons.Outlined.CheckCircle else Icons.Outlined.Cancel,
-                            contentDescription = "Icon Matching or Not",
-                            tint = if (isMatching) Color(0xff3F845F) else Color(
-                                0xffE25C5C
-                            )
-                        )
-                        Text(
-                            text = if (isMatching) "NFC Sesuai Dengan Database" else "NFC Tidak Sesuai Dengan Database",
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            color = if (isMatching) Color(0xff3F845F) else Color(
-                                0xffE25C5C
-                            ),
-                            textAlign = TextAlign.Center
-                        )
-                    },
-                    dismissButton = {
-                        Text(
-                            modifier = Modifier.padding(vertical = 20.dp),
-                            text = "Tutup",
-                            color = Color(0xff3F845F),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    }
-                )
-            }
-
-            openDialogVerifyTextField -> {
-                CustomDialog(
-                    onDismissRequest = {
-                        openDialogVerifyTextField = false
-                    },
-                    title = {
-                        Text(
-                            text = "Lengkapi Data",
-                            color = Color(0xffE25C5C),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    },
-                    content = {
-                        Icon(
-                            modifier = Modifier.size(80.dp),
-                            imageVector = Icons.Outlined.Cancel,
-                            contentDescription = "Icon Cancel",
-                            tint = Color(0xffE25C5C)
-                        )
-                        Text(
-                            text = "Anda dapat mengosongkan UID NFC Tag tapi harus mengisi seluruh data",
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            color = Color(0xffE25C5C),
-                            textAlign = TextAlign.Center
-                        )
-                    },
-                    dismissButton = {
-                        Text(
-                            modifier = Modifier.padding(vertical = 20.dp),
-                            text = "Batalkan",
-                            color = Color(0xffE25C5C),
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 22.sp,
-                        )
-                    },
-                )
-            }
+                    openDialogAddNFC = false
+                    nfcVm.clearUid()
+//                    onDisableNfc()
+                },
+                title = {
+                    Text(
+                        text = "Tambahkan NFC Tag",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = Icons.Outlined.Contactless,
+                        contentDescription = "Icon Contactless",
+                        tint = Color(0xff3F845F)
+                    )
+                    Text(
+                        text = "Tempelkan NFC Tag",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        color = Color(0xff3F845F),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                dismissButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Tutup",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                }
+            )
         }
 
+        openDialogVerifyNFC -> {
+            LaunchedEffect(uidHex) {
+                if (uidHex != null) {
+                    verifyNfcTagUid = uidHex!!
+                    verifyNFC()
+                    openDialogMatching = true
+                    openDialogVerifyNFC = false
+                    nfcVm.clearUid()
+//                    onDisableNfc()
+                }
+            }
+            CustomDialog(
+                modifier = Modifier
+                    .focusRequester(focusRequester)
+                    .focusable()
+                    .onKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown) {
+                            val char = event.utf16CodePoint.toChar()
+                            // Enter biasanya menandakan akhir input tag
+                            if (char == '\n') {
+                                verifyNfcTagUid =
+                                    nfcVm.reversedDecimalToHex(readNfcTagUid)
+                                verifyNFC()
+                                openDialogMatching = true
+                                openDialogVerifyNFC = false
+                                readNfcTagUid = ""
+                            } else {
+//                                verifyNfcTagUid += char
+                                readNfcTagUid += char
+                            }
+                        }
+                        true // consume event
+                    },
+                onDismissRequest = {
+                    openDialogVerifyNFC = false
+                    nfcVm.clearUid()
+//                    onDisableNfc()
+                },
+                title = {
+                    Text(
+                        text = "$buttonTitle NFC Tag",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = Icons.Outlined.Contactless,
+                        contentDescription = "Icon Contactless",
+                        tint = Color(0xff3F845F)
+                    )
+                    Text(
+                        text = "Tempelkan NFC Tag",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        color = Color(0xff3F845F),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                dismissButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Tutup",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                }
+            )
+        }
+
+        openDialogDeleteNFC -> {
+            CustomDialog(
+                onDismissRequest = {
+                    openDialogDeleteNFC = false
+                },
+                onConfirmation = {
+                    nfcTagUid = ""
+                    patrolSpot.value?.uidNfcTag = null
+                    openDialogDeleteNFC = false
+                },
+                title = {
+                    Text(
+                        text = "Yakin Hapus Data NFC Tag?",
+                        color = Color(0xffE25C5C),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = Icons.Outlined.Contactless,
+                        contentDescription = "Icon Contactless",
+                        tint = Color(0xffE25C5C)
+                    )
+                    Text(
+                        text = "Anda tidak dapat memulihkan perubahan data",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        color = Color(0xffE25C5C),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                dismissButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Batalkan",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                confirmButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Hapus",
+                        color = Color(0xffE25C5C),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                }
+            )
+        }
+
+        openDialogMatching -> {
+            CustomDialog(
+                onDismissRequest = {
+                    openDialogMatching = false
+                    verifyNfcTagUid = ""
+                    nfcVm.clearUid()
+                },
+                title = {
+                    Text(
+                        text = if (isMatching) "NFC Tag Sesuai" else "NFC Tag Tidak Sesuai",
+                        color = if (isMatching) Color(0xff3F845F) else Color(
+                            0xffE25C5C
+                        ),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = if (isMatching) Icons.Outlined.CheckCircle else Icons.Outlined.Cancel,
+                        contentDescription = "Icon Matching or Not",
+                        tint = if (isMatching) Color(0xff3F845F) else Color(
+                            0xffE25C5C
+                        )
+                    )
+                    Text(
+                        text = if (isMatching) "NFC Sesuai Dengan Database" else "NFC Tidak Sesuai Dengan Database",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        color = if (isMatching) Color(0xff3F845F) else Color(
+                            0xffE25C5C
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                dismissButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Tutup",
+                        color = Color(0xff3F845F),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                }
+            )
+        }
+
+        openDialogVerifyTextField -> {
+            CustomDialog(
+                onDismissRequest = {
+                    openDialogVerifyTextField = false
+                },
+                title = {
+                    Text(
+                        text = "Lengkapi Data",
+                        color = Color(0xffE25C5C),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = Icons.Outlined.Cancel,
+                        contentDescription = "Icon Cancel",
+                        tint = Color(0xffE25C5C)
+                    )
+                    Text(
+                        text = "Anda dapat mengosongkan UID NFC Tag tapi harus mengisi seluruh data",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        color = Color(0xffE25C5C),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                dismissButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Batalkan",
+                        color = Color(0xffE25C5C),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 private fun AddEditPatrolSpotScreenPreview() {
-    AddEditPatrolSpotScreen(id = null, onBackClick = {})
+    AddEditPatrolSpotScreen(
+        id = null,
+        onBackClick = {},
+        nfcVm = viewModel(),
+//        onEnableNfc = {},
+//        onDisableNfc = {}
+    )
 }

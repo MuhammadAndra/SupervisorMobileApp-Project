@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.example.supervisormobileapp_project.NfcReaderViewModel
 import com.example.supervisormobileapp_project.ui.screen.add_edit_patrol_spot.AddEditPatrolSpotScreen
 import com.example.supervisormobileapp_project.ui.screen.patrol_list.PatrolListScreen
 import kotlinx.serialization.Serializable
@@ -14,7 +15,12 @@ data class PatrolList(val id: Int)
 @Serializable
 data class AddEditPatrol(val id: Int?)
 
-fun NavGraphBuilder.patrolSpotGraph(navController: NavController) {
+fun NavGraphBuilder.patrolSpotGraph(
+    navController: NavController,
+    nfcVm: NfcReaderViewModel,
+//    onEnableNfc: () -> Unit,
+//    onDisableNfc: () -> Unit
+) {
     composable<PatrolList> { backStackEntry ->
         val patrolList = backStackEntry.toRoute<PatrolList>()
         PatrolListScreen(
@@ -30,6 +36,9 @@ fun NavGraphBuilder.patrolSpotGraph(navController: NavController) {
         AddEditPatrolSpotScreen(
             id = addEditPatrol.id,
             onBackClick = { navController.navigateUp() },
+            nfcVm = nfcVm,
+//            onEnableNfc = { onEnableNfc() },
+//            onDisableNfc = { onDisableNfc() }
         )
     }
 }
