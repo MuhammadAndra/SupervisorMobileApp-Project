@@ -26,10 +26,11 @@ class NfcReaderViewModel: ViewModel() {
             bytes[i] = ((uidValue shr (8 * i)) and 0xFF).toByte()
         }
 
+        //wrong step not needed
         // 3️⃣ Balik urutan byte (karena reversed / little-endian)
         val reversed = bytes.reversedArray()
 
-        // 4️⃣ Ubah ke format heksadesimal dengan separator ":"
+        // 3️⃣ Ubah ke format heksadesimal dengan separator ":"
         return bytes.joinToString(":") { "%02X".format(it) }
     }
 }

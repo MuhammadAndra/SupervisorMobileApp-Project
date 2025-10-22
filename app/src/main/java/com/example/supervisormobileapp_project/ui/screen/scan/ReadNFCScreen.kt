@@ -16,6 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.supervisormobileapp_project.NfcReaderViewModel
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.CustomDialog
@@ -46,18 +49,29 @@ fun ReadNFCScreen(
     modifier: Modifier = Modifier,
     onNavigateToHome: () -> Unit,
     onNavigateToReadNFC: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToProfile: () -> Unit,
+    nfcVm: NfcReaderViewModel
+
 ) {
     //viewmodel
     val vm: ReadNFCViewModel = viewModel()
     val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
 
+    val uidHex by nfcVm.uidHex.collectAsState()
+
     //read uid with external nfc reader
     var nfcTagUid by remember { mutableStateOf("") }
+    var readNfcTagUid by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
     //open dialog to show nfc not showing up in database
     var openDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uidHex) {
+        if (uidHex!=null){
+            vm.getPatrolSpotByNfcUid(uidHex!!)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -87,10 +101,12 @@ fun ReadNFCScreen(
                         val char = event.utf16CodePoint.toChar()
                         //if reading nfc uid complete
                         if (char == '\n') {
-                            vm.getPatrolSpotByNfcUid(nfcTagUid)
+                            val reversedUid = nfcVm.reversedDecimalToHex(readNfcTagUid)
+                            vm.getPatrolSpotByNfcUid(reversedUid)
+                            readNfcTagUid=""
                         } else {
                             //write nfc uid
-                            nfcTagUid += char
+                            readNfcTagUid += char
                         }
                     }
                     true // consume event
@@ -145,8 +161,8 @@ fun ReadNFCScreen(
                 },
                 title = {
                     Text(
-                        text = "Read NFC Tag",
-                        color = Color(0xff3F845F),
+                        text = "Tidak Terdeteksi",
+                        color = Color(0xffE25C5C),
                         fontWeight = FontWeight.Medium,
                         fontSize = 22.sp,
                     )
@@ -227,5 +243,7 @@ private fun ScanNFCScreenPreview() {
     ReadNFCScreen(
         onNavigateToHome = {},
         onNavigateToReadNFC = {},
-        onNavigateToProfile = {})
+        onNavigateToProfile = {},
+        nfcVm = viewModel()
+    )
 }

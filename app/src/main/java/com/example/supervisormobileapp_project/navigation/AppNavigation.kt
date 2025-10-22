@@ -17,7 +17,7 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Home) {
-        mainGraph(navController = navController)
+        mainGraph(navController = navController, nfcVm = nfcVm)
         patrolSpotGraph(navController = navController, nfcVm = nfcVm,
 //            onEnableNfc = { onEnableNfc() },
 //            onDisableNfc = { onDisableNfc() }

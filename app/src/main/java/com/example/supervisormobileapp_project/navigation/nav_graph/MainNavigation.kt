@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.example.supervisormobileapp_project.NfcReaderViewModel
 import com.example.supervisormobileapp_project.ui.TestDialog
 import com.example.supervisormobileapp_project.ui.screen.edit_profile.EditProfile
 import com.example.supervisormobileapp_project.ui.screen.home.HomeScreen
@@ -26,7 +27,10 @@ object ReadNFC
 object TestDialog
 
 
-fun NavGraphBuilder.mainGraph(navController: NavController) {
+fun NavGraphBuilder.mainGraph(
+    navController: NavController,
+    nfcVm: NfcReaderViewModel
+) {
     composable<Home> {
         HomeScreen(
             onNavigateToHome = {},
@@ -65,6 +69,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
     }
 
     composable<ReadNFC> {
+        nfcVm.clearUid()
         ReadNFCScreen(
             onNavigateToHome = {
                 navController.popBackStack()
@@ -75,6 +80,7 @@ fun NavGraphBuilder.mainGraph(navController: NavController) {
                 navController.popBackStack()
                 navController.navigate(Profile)
             },
+            nfcVm = nfcVm
         )
     }
     composable<TestDialog> {
