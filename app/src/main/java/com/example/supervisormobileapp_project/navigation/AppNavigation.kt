@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.supervisormobileapp_project.NfcReaderViewModel
 import com.example.supervisormobileapp_project.navigation.nav_graph.Home
+import com.example.supervisormobileapp_project.navigation.nav_graph.Login
 import com.example.supervisormobileapp_project.navigation.nav_graph.authGraph
 import com.example.supervisormobileapp_project.navigation.nav_graph.mainGraph
 import com.example.supervisormobileapp_project.navigation.nav_graph.patrolSpotGraph
@@ -16,7 +17,7 @@ fun AppNavigation(
 //    onDisableNfc: () -> Unit
 ) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Home) {
+    NavHost(navController = navController, startDestination = Login) {
         mainGraph(navController = navController, nfcVm = nfcVm)
         patrolSpotGraph(navController = navController, nfcVm = nfcVm,
 //            onEnableNfc = { onEnableNfc() },

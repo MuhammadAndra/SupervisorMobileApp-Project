@@ -5,12 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.supervisormobileapp_project.data.model.Supervisor
 import com.example.supervisormobileapp_project.data.model.changeSupervisorData
 import com.example.supervisormobileapp_project.data.model.fetchSupervisorData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProfileViewModel: ViewModel() {
+@HiltViewModel
+class ProfileViewModel @Inject constructor(): ViewModel() {
     private val _supervisor = MutableStateFlow<Supervisor?>(null)
     val supervisor: StateFlow<Supervisor?> = _supervisor
 

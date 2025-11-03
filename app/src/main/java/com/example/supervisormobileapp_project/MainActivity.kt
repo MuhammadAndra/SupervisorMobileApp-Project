@@ -10,7 +10,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import com.example.supervisormobileapp_project.navigation.AppNavigation
 import com.example.supervisormobileapp_project.ui.theme.SupervisorMobileAppProjectTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
     private val nfcVm: NfcReaderViewModel by viewModels()
     private var nfcAdapter: NfcAdapter? = null

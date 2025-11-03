@@ -36,8 +36,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.supervisormobileapp_project.ui.AuthViewModel
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.CustomButton
@@ -54,12 +56,13 @@ fun ProfileScreen(
     onNavigateToProfile: () -> Unit,
     onNavigateToProfileDetail: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onNavigateToChangePassword: () -> Unit
+    onNavigateToChangePassword: () -> Unit,
+    profileViewModel: ProfileViewModel = viewModel(),
+    authViewModel: AuthViewModel = hiltViewModel(),
 ) {
-    val vm: ProfileViewModel = viewModel()
-    val supervisor = vm.supervisor.collectAsStateWithLifecycle()
+    val supervisor = profileViewModel.supervisor.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        vm.getSupervisor()
+        profileViewModel.getSupervisor()
     }
     var fullName by remember { mutableStateOf("") }
     var position by remember { mutableStateOf("") }
@@ -68,6 +71,8 @@ fun ProfileScreen(
     var jobStatus by remember { mutableStateOf("") }
     var department by remember { mutableStateOf("") }
     var openDialog by remember { mutableStateOf(false) }
+
+    val token = authViewModel.token()
 
     LaunchedEffect(supervisor.value) {
         supervisor.value?.let {
@@ -78,6 +83,10 @@ fun ProfileScreen(
             jobStatus = it.jobStatus
             department = it.department
         }
+    }
+
+    fun logout(){
+        authViewModel.logout()
     }
 
     Scaffold(
@@ -132,6 +141,7 @@ fun ProfileScreen(
                             label = "Status Kerja"
                         )
                         CustomTextField(
+//                            value = token ?: "",
                             value = department,
                             //onValueChange = { department = it },
                             label = "Departemen"
@@ -182,6 +192,7 @@ fun ProfileScreen(
             CustomDialog(
                 onConfirmation = {
                     openDialog = false
+                    logout()
                     onNavigateToLogin()
                 },
                 onDismissRequest = { openDialog = false },
@@ -242,6 +253,6 @@ private fun ProfileScreenPreview() {
         onNavigateToProfile = {},
         onNavigateToProfileDetail = {},
         onNavigateToLogin = {},
-        onNavigateToChangePassword = {}
+        onNavigateToChangePassword = {},
     )
 }

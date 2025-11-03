@@ -24,7 +24,8 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
                 navController.popBackStack()
                 navController.navigate(Home)
             },
-            onNavigateToChangePassword = {})
+            onNavigateToChangePassword = {}
+        )
     }
     composable<OTP> {
         OTPScreen(
