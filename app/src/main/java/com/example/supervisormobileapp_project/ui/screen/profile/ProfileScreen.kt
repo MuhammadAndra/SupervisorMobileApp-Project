@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -72,7 +73,7 @@ fun ProfileScreen(
     var department by remember { mutableStateOf("") }
     var openDialog by remember { mutableStateOf(false) }
 
-    val token = authViewModel.token()
+    val token = authViewModel.getToken()
 
     LaunchedEffect(supervisor.value) {
         supervisor.value?.let {
@@ -141,8 +142,8 @@ fun ProfileScreen(
                             label = "Status Kerja"
                         )
                         CustomTextField(
-//                            value = token ?: "",
-                            value = department,
+                            value = token ?: "",
+//                            value = department,
                             //onValueChange = { department = it },
                             label = "Departemen"
                         )
@@ -185,6 +186,7 @@ fun ProfileScreen(
                 color = Color(0XFFE25C5C),
                 text = "Logout",
             )
+            Spacer(Modifier.height(15.dp))
         }
     }
     when {

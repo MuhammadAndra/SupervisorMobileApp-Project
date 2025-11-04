@@ -17,7 +17,7 @@ data class AddEditPatrol(val id: Int?)
 
 fun NavGraphBuilder.patrolSpotGraph(
     navController: NavController,
-    nfcVm: NfcReaderViewModel,
+    nfcViewModel: NfcReaderViewModel,
 //    onEnableNfc: () -> Unit,
 //    onDisableNfc: () -> Unit
 ) {
@@ -36,7 +36,7 @@ fun NavGraphBuilder.patrolSpotGraph(
         AddEditPatrolSpotScreen(
             id = addEditPatrol.id,
             onBackClick = { navController.navigateUp() },
-            nfcVm = nfcVm,
+            nfcVm = nfcViewModel,
 //            onEnableNfc = { onEnableNfc() },
 //            onDisableNfc = { onDisableNfc() }
         )

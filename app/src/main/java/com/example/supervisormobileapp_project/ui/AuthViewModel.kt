@@ -1,6 +1,5 @@
 package com.example.supervisormobileapp_project.ui
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -215,7 +214,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun token(): String? {
+    fun getToken(): String? {
         return repository.getToken()
     }
 }

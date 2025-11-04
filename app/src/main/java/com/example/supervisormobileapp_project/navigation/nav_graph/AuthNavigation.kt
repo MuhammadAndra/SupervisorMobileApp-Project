@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import com.example.supervisormobileapp_project.ui.screen.change_password.ChangePasswordScreen
 import com.example.supervisormobileapp_project.ui.screen.login.LoginScreen
 import com.example.supervisormobileapp_project.ui.screen.otp.OTPScreen
+import com.example.supervisormobileapp_project.ui.screen.splash.SplashScreen
 import kotlinx.serialization.Serializable
 
 @Serializable

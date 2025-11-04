@@ -3,7 +3,6 @@ package com.example.supervisormobileapp_project
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,7 +24,7 @@ class MainActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
         setContent {
             SupervisorMobileAppProjectTheme {
                 AppNavigation(
-                    nfcVm = nfcVm,
+                    nfcViewModel = nfcVm,
 //                    onEnableNfc = { enableNfcReader() },
 //                    onDisableNfc = { disableNfcReader() }
                 )

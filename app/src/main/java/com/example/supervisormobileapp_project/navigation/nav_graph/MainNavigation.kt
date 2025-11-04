@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.supervisormobileapp_project.NfcReaderViewModel
+import com.example.supervisormobileapp_project.navigation.Splash
 import com.example.supervisormobileapp_project.ui.TestDialog
 import com.example.supervisormobileapp_project.ui.screen.edit_profile.EditProfile
 import com.example.supervisormobileapp_project.ui.screen.home.HomeScreen
@@ -29,7 +30,7 @@ object TestDialog
 
 fun NavGraphBuilder.mainGraph(
     navController: NavController,
-    nfcVm: NfcReaderViewModel
+    nfcViewModel: NfcReaderViewModel
 ) {
     composable<Home> {
         HomeScreen(
@@ -60,7 +61,11 @@ fun NavGraphBuilder.mainGraph(
             },
             onNavigateToProfile = {},
             onNavigateToProfileDetail = { navController.navigate(EditProfile) },
-            onNavigateToLogin = { navController.navigate(Login) },
+            onNavigateToLogin = {
+                navController.navigate(Login) {
+                    popUpTo(Profile) { inclusive = true }
+                }
+            },
             onNavigateToChangePassword = { navController.navigate(OTP) }
         )
     }
@@ -69,18 +74,19 @@ fun NavGraphBuilder.mainGraph(
     }
 
     composable<ReadNFC> {
-        nfcVm.clearUid()
+        nfcViewModel.clearUid()
         ReadNFCScreen(
             onNavigateToHome = {
                 navController.popBackStack()
                 navController.navigate(Home)
+
             },
             onNavigateToReadNFC = {},
             onNavigateToProfile = {
                 navController.popBackStack()
                 navController.navigate(Profile)
             },
-            nfcVm = nfcVm
+            nfcVm = nfcViewModel
         )
     }
     composable<TestDialog> {

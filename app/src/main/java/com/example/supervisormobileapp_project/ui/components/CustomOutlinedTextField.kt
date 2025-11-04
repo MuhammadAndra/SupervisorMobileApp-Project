@@ -42,6 +42,10 @@ fun CustomOutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
         onValueChange = { onValueChange(it) },
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done // ubah tombol enter jadi "Done"
+        ),
         placeholder = {
             Text(
                 placeholder,
@@ -68,8 +72,7 @@ fun CustomOutlinedTextField(
             focusedLabelColor = Color(0xFF3F845F)     // kalau pakai label
         ),
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
-
-        )
+    )
 }
 
 @Preview(showBackground = true)
