@@ -193,7 +193,9 @@ class AuthViewModel @Inject constructor(
                         "change password",
                         "Failed: ${response.code()}, Error: $errorBody"
                     )
-                    _changePasswordMessage.value = "Gagal: $errorBody"
+//                    _changePasswordMessage.value = "Gagal: $errorBody"
+                    _changePasswordMessage.value = "Gagal: Password lama salah atau tidak valid."
+
                 }
             } catch (e: Exception) {
                 Log.e("change Password", "Exception: ${e.message}")

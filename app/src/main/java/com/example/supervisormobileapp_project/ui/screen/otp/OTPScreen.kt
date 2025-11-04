@@ -1,5 +1,6 @@
 package com.example.supervisormobileapp_project.ui.screen.otp
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,10 +22,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.supervisormobileapp_project.ui.AuthViewModel
 import com.example.supervisormobileapp_project.ui.components.CustomButton
 import com.example.supervisormobileapp_project.ui.components.CustomOutlinedTextField
 
@@ -33,12 +38,25 @@ import com.example.supervisormobileapp_project.ui.components.CustomOutlinedTextF
 fun OTPScreen(
     modifier: Modifier = Modifier,
     onNavigateToChangePassword: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var otp by remember { mutableStateOf("") }
+    val forgotPasswordMessage by authViewModel.requestOtpMessage.collectAsStateWithLifecycle()
+    val verifyOtpMessage by authViewModel.verifyOtpMessage.collectAsStateWithLifecycle()
+    val isVerified by authViewModel.isOtpVerified.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    fun onSendEmail() {}
+    fun onSendEmail() {
+        if (email.isBlank()) {
+            Toast.makeText(context, "Email tidak boleh kosong!", Toast.LENGTH_SHORT).show()
+        } else{
+            authViewModel.requestOtp(email)
+        }
+    }
+
+
 
     Scaffold(
         topBar = {

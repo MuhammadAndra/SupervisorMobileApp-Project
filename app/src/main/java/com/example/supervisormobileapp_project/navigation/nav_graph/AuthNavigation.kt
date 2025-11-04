@@ -18,6 +18,9 @@ object OTP
 @Serializable
 object ChangePass
 
+@Serializable
+object ResetPass
+
 fun NavGraphBuilder.authGraph(navController: NavController) {
     composable<Login> {
         LoginScreen(
@@ -42,5 +45,9 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
                 navController.navigate(Login)
             }
         )
+    }
+
+    composable<ResetPass> {
+
     }
 }
