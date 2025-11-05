@@ -90,7 +90,7 @@ class AuthViewModel @Inject constructor(
                         response.body()?.string() ?: "Empty response"
                     Log.d("ForgotPassword", "Response: $responseBody")
                     _requestOtpMessage.value =
-                        "Link telah dikirim. Silakan cek email anda!"
+                        "Link telah dikirim. Silakan cek email anda! (${System.currentTimeMillis()})"
                 } else {
                     val errorBody =
                         response.errorBody()?.string() ?: "Unknown error"
@@ -98,7 +98,7 @@ class AuthViewModel @Inject constructor(
                         "ForgotPassword",
                         "Failed: ${response.code()}, Error: $errorBody"
                     )
-                    _requestOtpMessage.value = "Link gagal terkirim"
+                    _requestOtpMessage.value = "Link gagal terkirim (${System.currentTimeMillis()})"
                 }
             } catch (e: Exception) {
                 Log.e("ForgotPassword", "Error: ${e.message}")
@@ -149,11 +149,20 @@ class AuthViewModel @Inject constructor(
                 } else {
                     val errorBody =
                         response.errorBody()?.string() ?: "Unknown error"
-                    Log.e(
-                        "ResetPassword",
-                        "Failed: ${response.code()}, Error: $errorBody"
-                    )
-                    _resetPasswordMessage.value = ("Gagal: $errorBody")
+                    try {
+                        val json = JSONObject(errorBody)
+                        val message = json.getString("message")
+                        Log.e("ResetPassword", "Error Message: $message")
+                        _resetPasswordMessage.value = "Gagal: $message (${System.currentTimeMillis()})"
+                    } catch (e: Exception) {
+                        Log.e("ResetPassword", "JSON parse error: ${e.message}")
+                        _resetPasswordMessage.value = "Gagal parse error: ${e.message}"
+                    }
+//                    Log.e(
+//                        "ResetPassword",
+//                        "Failed: ${response.code()}, Error: $errorBody"
+//                    )
+//                    _resetPasswordMessage.value = ("Gagal: $errorBody ${System.currentTimeMillis()}")
                 }
             } catch (e: Exception) {
                 Log.e("ResetPassword", "Exception: ${e.message}")
@@ -187,14 +196,26 @@ class AuthViewModel @Inject constructor(
                         "Password berhasil diperbarui!"
                     _isSuccess.value = true
                 } else {
+
                     val errorBody =
                         response.errorBody()?.string() ?: "Unknown error"
-                    Log.e(
-                        "change password",
-                        "Failed: ${response.code()}, Error: $errorBody"
-                    )
-//                    _changePasswordMessage.value = "Gagal: $errorBody"
-                    _changePasswordMessage.value = "Gagal: Password lama salah atau tidak valid."
+
+                    try {
+                        val json = JSONObject(errorBody)
+                        val message = json.getString("message")
+                        Log.e("ResetPassword", "Error Message: $message")
+                        _changePasswordMessage.value = "Gagal: $message (${System.currentTimeMillis()})"
+                    } catch (e: Exception) {
+                        Log.e("ResetPassword", "JSON parse error: ${e.message}")
+                        _changePasswordMessage.value = "Gagal parse error: ${e.message}"
+                    }
+
+//                    Log.e(
+//                        "change password",
+//                        "Failed: ${response.code()}, Error: $errorBody"
+//                    )
+//                    _changePasswordMessage.value = "Gagal: $errorBody ${System.currentTimeMillis()}"
+//                    _changePasswordMessage.value = "Gagal: Password lama salah atau tidak valid."
 
                 }
             } catch (e: Exception) {

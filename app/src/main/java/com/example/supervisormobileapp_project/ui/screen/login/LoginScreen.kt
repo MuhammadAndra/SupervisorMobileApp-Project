@@ -27,10 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.supervisormobileapp_project.data.repository.AuthRepository
 import com.example.supervisormobileapp_project.ui.AuthViewModel
-import com.example.supervisormobileapp_project.ui.AuthViewModelFactory
 import com.example.supervisormobileapp_project.ui.components.CustomButton
 import com.example.supervisormobileapp_project.ui.components.CustomOutlinedTextField
 import kotlin.text.contains
@@ -41,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun LoginScreen(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel = hiltViewModel(),
-    onNavigateToChangePassword: () -> Unit,
+    onNavigateToOTP: () -> Unit,
     onNavigateToHome: () -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
@@ -107,7 +104,7 @@ fun LoginScreen(
         ) {
             Text(
                 modifier = Modifier
-                    .clickable { onNavigateToChangePassword() }
+                    .clickable { onNavigateToOTP() }
                     .padding(all = 5.dp),
                 text = "Ubah Password",
                 fontSize = 14.sp,
@@ -140,5 +137,5 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {
-    LoginScreen(onNavigateToChangePassword = {}, onNavigateToHome = {})
+    LoginScreen(onNavigateToOTP = {}, onNavigateToHome = {})
 }

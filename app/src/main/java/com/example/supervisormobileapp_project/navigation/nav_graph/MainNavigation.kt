@@ -66,7 +66,7 @@ fun NavGraphBuilder.mainGraph(
                     popUpTo(Profile) { inclusive = true }
                 }
             },
-            onNavigateToChangePassword = { navController.navigate(OTP) }
+            onNavigateToChangePassword = { navController.navigate(ChangePass) }
         )
     }
     composable<EditProfile> {

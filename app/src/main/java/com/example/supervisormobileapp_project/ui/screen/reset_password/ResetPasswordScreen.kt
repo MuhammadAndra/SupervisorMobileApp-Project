@@ -36,29 +36,38 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.supervisormobileapp_project.ui.AuthViewModel
 
 
 @Composable
-fun ResetPasswordScreen(modifier: Modifier = Modifier, navCtrl: NavController, email: String) {
+fun ResetPasswordScreen(
+    modifier: Modifier = Modifier, email: String,
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
 
     var newPass by remember { mutableStateOf("") }
-    var repeatNewPass by remember { mutableStateOf("") }
+    var confNewPass by remember { mutableStateOf("") }
     var newPassIsVisible by remember { mutableStateOf(false) }
     var repeatNewPassIsVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
+    val resetPasswordIsSuccess by authViewModel.isSuccess.collectAsStateWithLifecycle()
+    val resetPasswordMessage by authViewModel.resetPasswordMessage.collectAsStateWithLifecycle()
 
     Column(
         Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IconButton(
-            onClick = { navCtrl.navigate("forgot_password_screen") },
+            onClick = {
+//                navCtrl.navigate("forgot_password_screen")
+            },
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(top = 20.dp, start = 20.dp)) {
+                .padding(top = 20.dp, start = 20.dp)
+        ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
@@ -92,25 +101,37 @@ fun ResetPasswordScreen(modifier: Modifier = Modifier, navCtrl: NavController, e
         )
         OutlinedTextField(
             value = newPass,
-            onValueChange = {newPass = it},
-            placeholder = { Text(text = "Masukkan password baru", color = Color.Gray)},
+            onValueChange = { newPass = it },
+            placeholder = {
+                Text(
+                    text = "Masukkan password baru",
+                    color = Color.Gray
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 40.dp),
             trailingIcon = {
-                val visibilityIcon = if (newPassIsVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                val visibilityIcon =
+                    if (newPassIsVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                 IconButton(
                     onClick = {
                         newPassIsVisible = !newPassIsVisible
                     }
                 ) {
-                    Icon(imageVector = visibilityIcon, contentDescription = null)
+                    Icon(
+                        imageVector = visibilityIcon,
+                        contentDescription = null
+                    )
                 }
             },
             supportingText = {
-                if(newPass == ""){ }
-                else if(newPass.length < 8){
-                    Text(text = "Password harus terdiri dari minimal 8 karakter", color =  Color.Red)
+                if (newPass == "") {
+                } else if (newPass.length < 8) {
+                    Text(
+                        text = "Password harus terdiri dari minimal 8 karakter",
+                        color = Color.Red
+                    )
                 }
             },
             visualTransformation = if (newPassIsVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -130,26 +151,35 @@ fun ResetPasswordScreen(modifier: Modifier = Modifier, navCtrl: NavController, e
                 .padding(bottom = 8.dp)
         )
         OutlinedTextField(
-            value = repeatNewPass,
-            onValueChange = {repeatNewPass = it},
-            placeholder = { Text(text = "Masukkan password baru", color = Color.Gray)},
+            value = confNewPass,
+            onValueChange = { confNewPass = it },
+            placeholder = {
+                Text(
+                    text = "Masukkan password baru",
+                    color = Color.Gray
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 40.dp),
             trailingIcon = {
-                val visibilityIcon = if (repeatNewPassIsVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                val visibilityIcon =
+                    if (repeatNewPassIsVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                 IconButton(
                     onClick = {
                         repeatNewPassIsVisible = !repeatNewPassIsVisible
                     }
                 ) {
-                    Icon(imageVector = visibilityIcon, contentDescription = null)
+                    Icon(
+                        imageVector = visibilityIcon,
+                        contentDescription = null
+                    )
                 }
             },
             supportingText = {
-                if(repeatNewPass == ""){ }
-                else if(repeatNewPass != newPass){
-                    Text(text = "Password tidak sesuai", color =  Color.Red)
+                if (confNewPass == "") {
+                } else if (confNewPass != newPass) {
+                    Text(text = "Password tidak sesuai", color = Color.Red)
                 }
             },
             visualTransformation = if (repeatNewPassIsVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -160,10 +190,14 @@ fun ResetPasswordScreen(modifier: Modifier = Modifier, navCtrl: NavController, e
         Spacer(modifier = Modifier.height(40.dp))
         Button(
             onClick = {
-                if (newPass == repeatNewPass) {
+                if (newPass == confNewPass) {
 //                    viewModel.resetPassword(email, newPass)
                 } else {
-                    Toast.makeText(context, "Pengulangan password salah!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Pengulangan password salah!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
             colors = ButtonDefaults.buttonColors(Color(0xFF2752E7)),
@@ -187,11 +221,13 @@ fun ResetPasswordScreen(modifier: Modifier = Modifier, navCtrl: NavController, e
 //                navCtrl.navigate("success_screen/Password anda berhasil diperbarui/login_screen")
 //            }
 //        }
+
+
     }
 }
 
 @Preview
 @Composable
 private fun ResetPasswordPreview() {
-    ResetPasswordScreen(navCtrl = rememberNavController(), email = "")
+    ResetPasswordScreen(email = "")
 }

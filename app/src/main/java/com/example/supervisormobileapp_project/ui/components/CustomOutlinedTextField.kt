@@ -29,6 +29,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
+//custom outlined text field mainly used for authentication purposes
+//such as email, password, OTP field
+//if (isPassword = true) -> enable visibility changes
 @Composable
 fun CustomOutlinedTextField(
     modifier: Modifier = Modifier,
@@ -36,11 +39,13 @@ fun CustomOutlinedTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     isPassword: Boolean,
+    readOnly:Boolean = false
 ) {
     var isVisible by remember { mutableStateOf(!isPassword) }
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
+        readOnly = readOnly,
         onValueChange = { onValueChange(it) },
         maxLines = 1,
         keyboardOptions = KeyboardOptions(

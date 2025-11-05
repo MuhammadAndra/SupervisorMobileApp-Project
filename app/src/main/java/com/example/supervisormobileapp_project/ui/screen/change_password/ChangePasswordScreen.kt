@@ -60,6 +60,7 @@ fun ChangePasswordScreen(
     val context = LocalContext.current
 
     var openDialogSuccess by remember { mutableStateOf(false) }
+    var openDialogError by remember { mutableStateOf(false) }
     var openDialogVerifyTextField by remember { mutableStateOf(false) }
     var openDialogVerifyConfPassword by remember { mutableStateOf(false) }
     fun changePassword() {
@@ -220,6 +221,46 @@ fun ChangePasswordScreen(
             )
         }
 
+        openDialogError -> {
+            CustomDialog(
+                onDismissRequest = {
+                    openDialogError = false
+                },
+                title = {
+                    Text(
+                        text = "Pembaruan Password Gagal",
+                        color = Color(0xffE25C5C),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                },
+                content = {
+                    Icon(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = Icons.Outlined.Cancel,
+                        contentDescription = "Icon CheckCircle",
+                        tint = Color(0xffE25C5C)
+                    )
+                    Text(
+                        text = changePasswordMessage,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        color = Color(0xffE25C5C),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                dismissButton = {
+                    Text(
+                        modifier = Modifier.padding(vertical = 20.dp),
+                        text = "Tutup",
+                        color = Color(0xffE25C5C),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 22.sp,
+                    )
+                }
+            )
+        }
+
         openDialogVerifyTextField -> {
             CustomDialog(
                 onDismissRequest = {
@@ -300,15 +341,18 @@ fun ChangePasswordScreen(
             )
         }
     }
-    LaunchedEffect(changePasswordIsSuccess) {
-        Log.d("changePasswordmsg",changePasswordMessage)
-        changePasswordMessage.let {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        }
+    LaunchedEffect(changePasswordMessage) {
+//        Log.d("changePasswordMessage", changePasswordMessage)
+//        changePasswordMessage.let {
+//            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+//        }
         if (changePasswordIsSuccess) {
             openDialogSuccess = true
 //            authViewModel.logout()
 //            onNavigateToLogin()
+        }
+        if (changePasswordMessage.contains("Gagal")){
+            openDialogError = true
         }
     }
 

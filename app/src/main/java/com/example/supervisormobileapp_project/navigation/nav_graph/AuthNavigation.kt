@@ -3,10 +3,12 @@ package com.example.supervisormobileapp_project.navigation.nav_graph
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.example.supervisormobileapp_project.ui.screen.change_password.ChangePasswordScreen
 import com.example.supervisormobileapp_project.ui.screen.login.LoginScreen
 import com.example.supervisormobileapp_project.ui.screen.otp.OTPScreen
-import com.example.supervisormobileapp_project.ui.screen.splash.SplashScreen
+import com.example.supervisormobileapp_project.ui.screen.reset_password.ResetPasswordScreen
+import com.example.supervisormobileapp_project.ui.screen.reset_password.ResetPasswordScreen1
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,7 +21,7 @@ object OTP
 object ChangePass
 
 @Serializable
-object ResetPass
+data class ResetPass(val email: String)
 
 fun NavGraphBuilder.authGraph(navController: NavController) {
     composable<Login> {
@@ -28,13 +30,17 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
                 navController.popBackStack()
                 navController.navigate(Home)
             },
-            onNavigateToChangePassword = {}
+            onNavigateToOTP = {
+                navController.navigate(OTP)
+            }
         )
     }
     composable<OTP> {
         OTPScreen(
             onBackClick = { navController.navigateUp() },
-            onNavigateToChangePassword = { navController.navigate(ChangePass) }
+            onNavigateToResetPassword = { email ->
+                navController.navigate(ResetPass(email = email))
+            }
         )
     }
     composable<ChangePass> {
@@ -47,7 +53,15 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
         )
     }
 
-    composable<ResetPass> {
-
+    composable<ResetPass> { navBackStackEntry ->
+        val resetPass = navBackStackEntry.toRoute<ResetPass>()
+        ResetPasswordScreen1(
+            email = resetPass.email,
+            onBackClick = { navController.navigateUp() },
+            onNavigateToLogin = {
+                navController.popBackStack()
+                navController.navigate(Login)
+            },
+        )
     }
 }
