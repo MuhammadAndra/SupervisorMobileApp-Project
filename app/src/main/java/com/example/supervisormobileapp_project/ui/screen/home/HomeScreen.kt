@@ -27,13 +27,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.supervisormobileapp_project.data.model.Company
-import com.example.supervisormobileapp_project.data.model.companyList
+import com.example.supervisormobileapp_project.ui.AuthViewModel
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.OvalBackground
 import com.example.supervisormobileapp_project.ui.components.UsernameCard
@@ -44,13 +45,15 @@ fun HomeScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToReadNFC: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToPatrolList: (Int) -> Unit
-) {
-    val vm: HomeViewmodel = viewModel()
-    val companies by vm.companies.collectAsStateWithLifecycle()
+    onNavigateToPatrolList: (Int) -> Unit,
+    homeViewmodel: HomeViewmodel = hiltViewModel(),
+    ) {
+//    val vm: HomeViewmodel = viewModel()
+    val companies by homeViewmodel.companies.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        vm.getCompanies()
+//        vm.getCompanies()
+        homeViewmodel.getCompaniesFromApi()
     }
 
     Scaffold(
@@ -115,7 +118,7 @@ fun CompanyCard(modifier: Modifier = Modifier, company: Company) {
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(company.logo)
+                    .data(company.image)
                     .crossfade(true)
                     .build(),
                 contentDescription = "Gambar Perusahaan",
@@ -126,7 +129,7 @@ fun CompanyCard(modifier: Modifier = Modifier, company: Company) {
             )
             Column {
                 Text(
-                    text = company.name,
+                    text = company.title,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp,
                 )
@@ -148,9 +151,9 @@ private fun CompanyCardPreview() {
     CompanyCard(
         company = Company(
             id = 1,
-            name = "Fakultas Ilmu Komputer Universitas Brawijaya",
+            title = "Fakultas Ilmu Komputer Universitas Brawijaya",
             address = "Ruang A1 No.19, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur",
-            logo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtoRD2IW8OpUHuzrPbXKj9E28d-DWZhPBJLRUP2H9rKpLbKAsnDpD9ViWdTXwBdCThRzo&usqp=CAU"
+            image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtoRD2IW8OpUHuzrPbXKj9E28d-DWZhPBJLRUP2H9rKpLbKAsnDpD9ViWdTXwBdCThRzo&usqp=CAU"
         )
     )
 }

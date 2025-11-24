@@ -116,7 +116,7 @@ fun ReadNFCScreen(
             if (patrolSpot.value?.status=="success" && patrolSpot.value?.data!=null) {
                 nfcTagUid=""
                 NFCTagData(
-                    location =  patrolSpot.value?.data?.name?:"",
+                    location =  patrolSpot.value?.data?.title?:"",
                     address = patrolSpot.value?.data?.address?:"",
                     longitude = patrolSpot.value?.data?.longitude?:"" ,
                     latitude = patrolSpot.value?.data?.latitude?:"",

@@ -5,12 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
 import com.example.supervisormobileapp_project.data.model.editPatrolSpot
 import com.example.supervisormobileapp_project.data.model.fetchPatrolSpotById
+import com.example.supervisormobileapp_project.data.repository.CompanyRepository
+import com.example.supervisormobileapp_project.data.repository.PatrolSpotRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EditPatrolSpotViewModel: ViewModel() {
+@HiltViewModel
+class EditPatrolSpotViewModel @Inject constructor(
+    private val repository: PatrolSpotRepository
+) : ViewModel() {
     private val _patrolSpot = MutableStateFlow<PatrolSpot?>(null)
     val patrolSpot: StateFlow<PatrolSpot?> = _patrolSpot
 
@@ -20,10 +27,15 @@ class EditPatrolSpotViewModel: ViewModel() {
         }
     }
 
+    fun getPatrolSpotByIdFromApi(id:Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _patrolSpot.value = repository.getPatrolSpot(patrolSpotId = id)
+        }
+    }
+
     fun changePatrolSpot(id: Int,newSpot: PatrolSpot){
         viewModelScope.launch(Dispatchers.IO) {
             editPatrolSpot(id = id, newSpot = newSpot)
         }
     }
-
 }

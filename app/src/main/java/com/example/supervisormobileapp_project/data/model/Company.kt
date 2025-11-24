@@ -2,9 +2,9 @@ package com.example.supervisormobileapp_project.data.model
 
 data class Company(
     val id: Int,
-    val name:String,
+    val title:String,
     val address: String,
-    val logo: String
+    val image: String
 )
 
 

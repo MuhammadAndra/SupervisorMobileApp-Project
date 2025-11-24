@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
@@ -38,13 +39,14 @@ fun PatrolListScreen(
     modifier: Modifier = Modifier,
     id: Int,
     onBackClick: () -> Unit,
-    onNavigateToAddEditPatrol: (Int?) -> Unit
-) {
-    val vm: PatrolListViewModel = viewModel()
-    val patrolSpots by vm.patrolSpots.collectAsStateWithLifecycle()
+    onNavigateToAddEditPatrol: (Int?) -> Unit,
+    patrolListViewModel: PatrolListViewModel = hiltViewModel(),
+
+    ) {
+    val patrolSpots by patrolListViewModel.patrolSpots.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        vm.getPatrolSpots(id)
+        patrolListViewModel.getPatrolSpotsFromApi(id)
     }
 
     Scaffold(
@@ -114,7 +116,7 @@ fun PatrolListCard(modifier: Modifier = Modifier, patrolSpot: PatrolSpot) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = patrolSpot.name,
+                text = patrolSpot.title,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp
             )
@@ -155,7 +157,7 @@ private fun PatrolListCardPreview() {
     PatrolListCard(
         patrolSpot = PatrolSpot(
             id = 1,
-            name = "GKM FILKOM UB Lantai 1",
+            title = "GKM FILKOM UB Lantai 1",
             address = "Ruang A1 No.19, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145",
             latitude = "-7.954699677098358",
             longitude = "112.61444010123617",

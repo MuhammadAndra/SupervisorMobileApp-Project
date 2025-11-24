@@ -8,14 +8,26 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.example.supervisormobileapp_project.data.model.fetchCompanies
+import com.example.supervisormobileapp_project.data.repository.CompanyRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class HomeViewmodel : ViewModel() {
+@HiltViewModel
+class HomeViewmodel @Inject constructor(
+    private val repository: CompanyRepository
+) : ViewModel() {
     private val _companies = MutableStateFlow<List<Company>>(emptyList())
     val companies: StateFlow<List<Company>> = _companies
 
-    fun getCompanies(){
+    fun getCompanies() {
         viewModelScope.launch(Dispatchers.IO) {
             _companies.value = fetchCompanies()
+        }
+    }
+
+    fun getCompaniesFromApi() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _companies.value = repository.getCompanies()
         }
     }
 }

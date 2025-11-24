@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.supervisormobileapp_project.NfcReaderViewModel
 import com.example.supervisormobileapp_project.navigation.nav_graph.Home
 import com.example.supervisormobileapp_project.navigation.nav_graph.Login
+import com.example.supervisormobileapp_project.navigation.nav_graph.Profile
 import com.example.supervisormobileapp_project.navigation.nav_graph.authGraph
 import com.example.supervisormobileapp_project.navigation.nav_graph.mainGraph
 import com.example.supervisormobileapp_project.navigation.nav_graph.patrolSpotGraph
@@ -23,6 +24,8 @@ object Splash
 fun AppNavigation(
     //ini kenapa ada nfc viewModel yang dilempar kedalam?
     //kenapa ga dipanggil langsung aja di screen?
+    //harusnya pake dependency injection aja sih
+    //belum sempat diperbaiki
     nfcViewModel: NfcReaderViewModel,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {

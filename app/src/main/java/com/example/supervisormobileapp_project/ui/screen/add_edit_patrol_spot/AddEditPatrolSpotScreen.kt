@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.NfcReaderViewModel
@@ -45,6 +46,7 @@ import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomButton
 import com.example.supervisormobileapp_project.ui.components.CustomDialog
 import com.example.supervisormobileapp_project.ui.components.CustomTextField
+import com.example.supervisormobileapp_project.ui.screen.home.HomeViewmodel
 
 @Composable
 fun AddEditPatrolSpotScreen(
@@ -52,18 +54,22 @@ fun AddEditPatrolSpotScreen(
     id: Int?,
     onBackClick: () -> Unit,
     nfcVm: NfcReaderViewModel,
+    editPatrolSpotViewModel: EditPatrolSpotViewModel = hiltViewModel(),
+
 //    onEnableNfc: () -> Unit,
 //    onDisableNfc: () -> Unit
 ) {
     val uidHex by nfcVm.uidHex.collectAsState()
+    val patrolSpot = editPatrolSpotViewModel.patrolSpot.collectAsStateWithLifecycle()
 
-    val vm: EditPatrolSpotViewModel = viewModel()
-    val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
+//    val vm: EditPatrolSpotViewModel = viewModel()
+//    val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
 
     //initial data fetching for patrol spot detail
     LaunchedEffect(Unit) {
         if (id != null) {
-            vm.getPatrolSpotById(id)
+//            editPatrolSpotViewModel.getPatrolSpotById(id)
+            editPatrolSpotViewModel.getPatrolSpotByIdFromApi(id)
         }
     }
 
@@ -116,11 +122,11 @@ fun AddEditPatrolSpotScreen(
     //display patrol spot detail data
     LaunchedEffect(patrolSpot.value) {
         patrolSpot.value?.let { spot ->
-            locationName = spot.name
+            locationName = spot.title
             address = spot.address
             latitude = spot.latitude
             longitude = spot.longitude
-            description = spot.description
+            description = spot.description ?: "-"
             nfcTagUid = spot.uidNfcTag ?: ""
         }
     }
@@ -222,11 +228,11 @@ fun AddEditPatrolSpotScreen(
                     onClick = {
                         //check if all the text field already filled
                         if (locationName != "" && address != "" && latitude != "" && longitude != "" && description != "") {
-                            vm.changePatrolSpot(
+                            editPatrolSpotViewModel.changePatrolSpot(
                                 id = id!!, newSpot = PatrolSpot(
                                     companyId = patrolSpot.value!!.companyId,
                                     id = patrolSpot.value!!.id,
-                                    name = locationName,
+                                    title = locationName,
                                     address = address,
                                     latitude = latitude,
                                     longitude = longitude,

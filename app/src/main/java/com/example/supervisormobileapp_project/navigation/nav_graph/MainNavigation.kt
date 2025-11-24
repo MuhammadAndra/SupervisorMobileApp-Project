@@ -6,7 +6,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.supervisormobileapp_project.NfcReaderViewModel
 import com.example.supervisormobileapp_project.navigation.Splash
-import com.example.supervisormobileapp_project.ui.TestDialog
 import com.example.supervisormobileapp_project.ui.screen.edit_profile.EditProfile
 import com.example.supervisormobileapp_project.ui.screen.home.HomeScreen
 import com.example.supervisormobileapp_project.ui.screen.profile.ProfileScreen
@@ -23,10 +22,6 @@ object EditProfile
 
 @Serializable
 object ReadNFC
-
-@Serializable
-object TestDialog
-
 
 fun NavGraphBuilder.mainGraph(
     navController: NavController,
@@ -88,8 +83,5 @@ fun NavGraphBuilder.mainGraph(
             },
             nfcVm = nfcViewModel
         )
-    }
-    composable<TestDialog> {
-        TestDialog()
     }
 }

@@ -1,5 +1,6 @@
 package com.example.supervisormobileapp_project
 
+import android.content.Context
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
@@ -7,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.ui.platform.LocalContext
 import com.example.supervisormobileapp_project.navigation.AppNavigation
 import com.example.supervisormobileapp_project.ui.theme.SupervisorMobileAppProjectTheme
 import dagger.hilt.android.AndroidEntryPoint
