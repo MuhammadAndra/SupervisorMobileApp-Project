@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.Contactless
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,9 +36,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.NfcReaderViewModel
+import com.example.supervisormobileapp_project.data.model.Resource
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.CustomDialog
@@ -49,12 +51,14 @@ fun ReadNFCScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToReadNFC: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    nfcVm: NfcReaderViewModel
+    nfcVm: NfcReaderViewModel,
+    readNFCViewModel: ReadNFCViewModel = hiltViewModel(),
 
-) {
+    ) {
     //viewmodel
-    val vm: ReadNFCViewModel = viewModel()
-    val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
+//    val vm: ReadNFCViewModel = viewModel()
+//    val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
+    val checkPatrolSpotState by readNFCViewModel.checkPatrolSpotResponse.collectAsState()
 
     val uidHex by nfcVm.uidHex.collectAsState()
 
@@ -67,8 +71,10 @@ fun ReadNFCScreen(
     var openDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(uidHex) {
-        if (uidHex!=null){
-            vm.getPatrolSpotByNfcUid(uidHex!!)
+        if (uidHex != null) {
+//            readNFCViewModel.getPatrolSpotByNfcUid(uidHex!!)
+            readNFCViewModel.checkNfcFromApi(uidHex!!)
+
         }
     }
 
@@ -100,9 +106,13 @@ fun ReadNFCScreen(
                         val char = event.utf16CodePoint.toChar()
                         //if reading nfc uid complete
                         if (char == '\n') {
-                            val reversedUid = nfcVm.reversedDecimalToHex(readNfcTagUid)
-                            vm.getPatrolSpotByNfcUid(reversedUid)
-                            readNfcTagUid=""
+                            val reversedUid =
+                                nfcVm.reversedDecimalToHex(readNfcTagUid)
+
+//                            readNFCViewModel.getPatrolSpotByNfcUid(reversedUid)
+                            readNFCViewModel.checkNfcFromApi(reversedUid)
+
+                            readNfcTagUid = ""
                         } else {
                             //write nfc uid
                             readNfcTagUid += char
@@ -111,47 +121,97 @@ fun ReadNFCScreen(
                     true // consume event
                 },
         ) {
-            //if success show data
-            if (patrolSpot.value?.status=="success" && patrolSpot.value?.data!=null) {
-                nfcTagUid=""
-                NFCTagData(
-                    location =  patrolSpot.value?.data?.title?:"",
-                    address = patrolSpot.value?.data?.address?:"",
-                    longitude = patrolSpot.value?.data?.longitude?:"" ,
-                    latitude = patrolSpot.value?.data?.latitude?:"",
-                    description = patrolSpot.value?.data?.description?:"",
-                    nfcTagUid = patrolSpot.value?.data?.nfcTagUid?:"",
-                )
-            //if error show dialog
-            } else if(patrolSpot.value?.status=="error"){
-                openDialog = true
-                nfcTagUid=""
-                vm.clearPatrolSpot()
-            }else {
-                //else show message to scan nfc
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Icon(
-                        modifier = Modifier.size(90.dp),
-                        imageVector = Icons.Outlined.Contactless,
-                        contentDescription = "Read NFC Tag Icon",
-                        tint = Color(0XFF3F845F)
-                    )
-                    Spacer(Modifier.height(20.dp))
-                    Text(
-                        "Tempelkan NFC Tag",
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp,
-                        color = Color(0XFF3F845F)
+            when (checkPatrolSpotState) {
+                is Resource.Loading -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        CircularProgressIndicator(color = Color((0XFF3F845F)))
+                    }
+                }
+
+                is Resource.Error -> {
+                    openDialog = true
+                    nfcTagUid = ""
+                    readNfcTagUid = ""
+                    readNFCViewModel.clearPatrolSpot()
+                }
+                is Resource.Idle -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(90.dp),
+                            imageVector = Icons.Outlined.Contactless,
+                            contentDescription = "Read NFC Tag Icon",
+                            tint = Color(0XFF3F845F)
+                        )
+                        Spacer(Modifier.height(20.dp))
+                        Text(
+                            "Tempelkan NFC Tag",
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 20.sp,
+                            color = Color(0XFF3F845F)
+                        )
+                    }
+                }
+                is Resource.Success -> {
+                    val patrolSpot = (checkPatrolSpotState as Resource.Success).data
+                    NFCTagData(
+                        location = patrolSpot.data.title,
+                        address = patrolSpot.data.address ,
+                        longitude = patrolSpot.data.longitude ?: "",
+                        latitude = patrolSpot.data.latitude ?: "",
+                        description = patrolSpot.data.description ?: "",
+                        nfcTagUid = patrolSpot.data.nfcTagUid ?: "",
                     )
                 }
             }
+            //if success show data
+//            if (patrolSpot.value?.status == "success" && patrolSpot.value?.data != null) {
+//                nfcTagUid = ""
+//                NFCTagData(
+//                    location = patrolSpot.value?.data?.title ?: "",
+//                    address = patrolSpot.value?.data?.address ?: "",
+//                    longitude = patrolSpot.value?.data?.longitude ?: "",
+//                    latitude = patrolSpot.value?.data?.latitude ?: "",
+//                    description = patrolSpot.value?.data?.description ?: "",
+//                    nfcTagUid = patrolSpot.value?.data?.nfcTagUid ?: "",
+//                )
+//                //if error show dialog
+//            } else if (patrolSpot.value?.status == "error") {
+//                openDialog = true
+//                nfcTagUid = ""
+//                readNFCViewModel.clearPatrolSpot()
+//            } else {
+//                //else show message to scan nfc
+//                Column(
+//                    modifier = Modifier.fillMaxSize(),
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.CenterHorizontally,
+//                ) {
+//                    Icon(
+//                        modifier = Modifier.size(90.dp),
+//                        imageVector = Icons.Outlined.Contactless,
+//                        contentDescription = "Read NFC Tag Icon",
+//                        tint = Color(0XFF3F845F)
+//                    )
+//                    Spacer(Modifier.height(20.dp))
+//                    Text(
+//                        "Tempelkan NFC Tag",
+//                        fontWeight = FontWeight.Medium,
+//                        fontSize = 20.sp,
+//                        color = Color(0XFF3F845F)
+//                    )
+//                }
+//            }
         }
     }
-    when{
+    when {
         //alert dialog to show error in nfc uid reading
         openDialog -> {
             CustomDialog(
@@ -205,11 +265,6 @@ private fun NFCTagData(
     nfcTagUid: String
 ) {
     CustomTextField(
-        value = longitude,
-        //onValueChange = { department = it },
-        label = "Garis Bujur"
-    )
-    CustomTextField(
         value = location,
         //onValueChange = { nickName = it },
         label = "Nama Lokasi"
@@ -223,6 +278,11 @@ private fun NFCTagData(
         value = latitude,
         //onValueChange = { jobStatus = it },
         label = "Garis Lintang"
+    )
+    CustomTextField(
+        value = longitude,
+        //onValueChange = { department = it },
+        label = "Garis Bujur"
     )
     CustomTextField(
         value = description,

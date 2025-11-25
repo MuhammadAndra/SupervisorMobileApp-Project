@@ -15,3 +15,9 @@ data class VerifyNfcResponse(
 data class ResponseData(
     val id: String
 )
+
+data class CheckPatrolSpotResponse(
+    val status:String,
+    val message:String,
+    val data: PatrolSpot
+)

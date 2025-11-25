@@ -1,7 +1,8 @@
 package com.example.supervisormobileapp_project.data.repository
 
 import android.content.Context
-import android.util.Log
+import com.example.supervisormobileapp_project.data.model.CheckNfcRequest
+import com.example.supervisormobileapp_project.data.model.CheckPatrolSpotResponse
 import com.example.supervisormobileapp_project.data.model.EditPatrolSpotResponse
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
 import com.example.supervisormobileapp_project.data.model.Resource
@@ -66,11 +67,36 @@ class PatrolSpotRepository @Inject constructor(
         patrolSpotId: Int,
         verifyingPatrolSpot: PatrolSpot
     ): Resource<VerifyNfcResponse> {
-        return try{
+        return try {
             val token = getToken() ?: ""
-            val response = api.verifyNfc(token = "Bearer $token",
+            val response = api.verifyNfc(
+                token = "Bearer $token",
                 patrolSpotId = patrolSpotId,
                 verifyingPatrolSpot = verifyingPatrolSpot
+            )
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    Resource.Success(body)
+                } else {
+                    Resource.Error("Empty response body")
+                }
+            } else {
+                Resource.Error("Server error (${response.code()})")
+            }
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Unexpected error")
+        }
+    }
+
+    suspend fun checkNfc(
+        nfcTagUid: String,
+    ): Resource<CheckPatrolSpotResponse> {
+        return try {
+            val token = getToken() ?: ""
+            val response = api.checkPatrolSpot(
+                token = "Bearer $token",
+                nfcTagUid = CheckNfcRequest(nfcTagUid = nfcTagUid)
             )
             if (response.isSuccessful) {
                 val body = response.body()

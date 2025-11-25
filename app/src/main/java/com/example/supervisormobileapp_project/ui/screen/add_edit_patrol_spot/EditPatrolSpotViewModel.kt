@@ -2,6 +2,7 @@ package com.example.supervisormobileapp_project.ui.screen.add_edit_patrol_spot
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.supervisormobileapp_project.data.model.CheckPatrolSpotResponse
 import com.example.supervisormobileapp_project.data.model.EditPatrolSpotResponse
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
 import com.example.supervisormobileapp_project.data.model.Resource
@@ -32,6 +33,7 @@ class EditPatrolSpotViewModel @Inject constructor(
     private val _verifyPatrolSpotResponse =
         MutableStateFlow<Resource<VerifyNfcResponse>>(Resource.Idle())
     val verifyPatrolSpotResponse = _verifyPatrolSpotResponse
+
 
 
     fun getPatrolSpotById(id: Int) {
@@ -71,4 +73,5 @@ class EditPatrolSpotViewModel @Inject constructor(
             )
         }
     }
+
 }

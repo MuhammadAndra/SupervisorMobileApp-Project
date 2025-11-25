@@ -1,5 +1,7 @@
 package com.example.supervisormobileapp_project.data.network.api_service
 
+import com.example.supervisormobileapp_project.data.model.CheckNfcRequest
+import com.example.supervisormobileapp_project.data.model.CheckPatrolSpotResponse
 import com.example.supervisormobileapp_project.data.model.EditPatrolSpotResponse
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
 import com.example.supervisormobileapp_project.data.model.VerifyNfcResponse
@@ -30,4 +32,10 @@ interface PatrolSpotApiService {
         @Path("patrolSpotId") patrolSpotId:Int,
         @Body verifyingPatrolSpot: PatrolSpot
     ): Response<VerifyNfcResponse>
+
+    @POST("v1/check-nfc")
+    suspend fun checkPatrolSpot(
+        @Header("Authorization") token: String,
+        @Body nfcTagUid: CheckNfcRequest
+    ): Response<CheckPatrolSpotResponse>
 }
