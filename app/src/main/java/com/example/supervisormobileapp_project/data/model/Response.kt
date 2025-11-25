@@ -3,9 +3,15 @@ package com.example.supervisormobileapp_project.data.model
 data class EditPatrolSpotResponse(
     val status:String,
     val message:String,
-    val data: EditData
+    val data: ResponseData
 )
 
-data class EditData(
+data class VerifyNfcResponse(
+    val status:String,
+    val message:String,
+    val data: ResponseData
+)
+
+data class ResponseData(
     val id: String
 )

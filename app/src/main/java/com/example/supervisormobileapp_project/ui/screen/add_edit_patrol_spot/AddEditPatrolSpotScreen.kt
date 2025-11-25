@@ -1,6 +1,5 @@
 package com.example.supervisormobileapp_project.ui.screen.add_edit_patrol_spot
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +44,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.NfcReaderViewModel
-import com.example.supervisormobileapp_project.data.model.EditPatrolSpotResponse
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
 import com.example.supervisormobileapp_project.data.model.Resource
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
@@ -71,6 +69,9 @@ fun AddEditPatrolSpotScreen(
 
     val editPatrolSpotState by
     editPatrolSpotViewModel.editPatrolSpotResponse.collectAsState()
+    val verifyPatrolSpotState by
+    editPatrolSpotViewModel.verifyPatrolSpotResponse.collectAsState()
+
     val context = LocalContext.current
 //    val vm: EditPatrolSpotViewModel = viewModel()
 //    val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
@@ -135,8 +136,32 @@ fun AddEditPatrolSpotScreen(
     val buttonTitle =
         if (patrolSpot.value?.nfcTagUid != null && nfcTagUid != "") "Verifikasi" else "Tambahkan"
 
+    LaunchedEffect(verifyPatrolSpotState) {
+        when (val state = verifyPatrolSpotState) {
+            is Resource.Error -> {
+                isMatching = false
+                openDialogMatching = true
+                openDialogVerifyNFC = false
+                nfcVm.clearUid()
+            }
+
+            is Resource.Success -> {
+                if (state.data.message == "NFC Tag UID compatible with database") {
+                    isMatching = true
+                } else {
+                    isMatching = false
+                }
+                openDialogMatching = true
+                openDialogVerifyNFC = false
+                nfcVm.clearUid()
+            }
+
+            else -> {}
+        }
+    }
+
     LaunchedEffect(editPatrolSpotState) {
-        when(val state = editPatrolSpotState) {
+        when (val state = editPatrolSpotState) {
             is Resource.Error -> {
                 Toast.makeText(
                     context,
@@ -248,7 +273,7 @@ fun AddEditPatrolSpotScreen(
                             longitude != "" &&
                             description != ""
                         ) {
-                            editPatrolSpotViewModel.changePatrolSpotFromApi(
+                            editPatrolSpotViewModel.editPatrolSpotFromApi(
                                 id = id!!, editedPatrolSpot = PatrolSpot(
                                     companyId = patrolSpot.value!!.companyId,
                                     id = patrolSpot.value!!.id,
@@ -370,11 +395,22 @@ fun AddEditPatrolSpotScreen(
             LaunchedEffect(uidHex) {
                 if (uidHex != null) {
                     verifyNfcTagUid = uidHex!!
-                    verifyNFC()
-                    openDialogMatching = true
-                    openDialogVerifyNFC = false
-                    nfcVm.clearUid()
-//                    onDisableNfc()
+//                    verifyNFC()
+                    editPatrolSpotViewModel.verifyNfcFromApi(
+                        id = id!!,
+                        verifyingNfcPatrolSpot = PatrolSpot(
+                            id  = id,
+                            title  = title,
+                            address = address,
+                            latitude = latitude,
+                            longitude = longitude,
+                            description = description,
+                            nfcTagUid = verifyNfcTagUid
+                        )
+                    )
+//                    openDialogMatching = true
+//                    openDialogVerifyNFC = false
+//                    nfcVm.clearUid()
                 }
             }
             CustomDialog(
@@ -386,11 +422,22 @@ fun AddEditPatrolSpotScreen(
                             val char = event.utf16CodePoint.toChar()
                             // Enter biasanya menandakan akhir input tag
                             if (char == '\n') {
-                                verifyNfcTagUid =
-                                    nfcVm.reversedDecimalToHex(readNfcTagUid)
-                                verifyNFC()
-                                openDialogMatching = true
-                                openDialogVerifyNFC = false
+                                verifyNfcTagUid = nfcVm.reversedDecimalToHex(readNfcTagUid)
+//                                verifyNFC()
+                                editPatrolSpotViewModel.verifyNfcFromApi(
+                                    id = id!!,
+                                    verifyingNfcPatrolSpot = PatrolSpot(
+                                        id  = id,
+                                        title  = title,
+                                        address = address,
+                                        latitude = latitude,
+                                        longitude = longitude,
+                                        description = description,
+                                        nfcTagUid = verifyNfcTagUid
+                                    )
+                                )
+//                                openDialogMatching = true
+//                                openDialogVerifyNFC = false
                                 readNfcTagUid = ""
                             } else {
 //                                verifyNfcTagUid += char
