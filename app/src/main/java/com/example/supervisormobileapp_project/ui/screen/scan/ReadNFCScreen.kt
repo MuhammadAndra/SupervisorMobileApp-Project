@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Cancel
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Contactless
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -121,7 +120,7 @@ fun ReadNFCScreen(
                     longitude = patrolSpot.value?.data?.longitude?:"" ,
                     latitude = patrolSpot.value?.data?.latitude?:"",
                     description = patrolSpot.value?.data?.description?:"",
-                    nfcTagUid = patrolSpot.value?.data?.uidNfcTag?:"",
+                    nfcTagUid = patrolSpot.value?.data?.nfcTagUid?:"",
                 )
             //if error show dialog
             } else if(patrolSpot.value?.status=="error"){

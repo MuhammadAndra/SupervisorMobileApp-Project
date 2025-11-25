@@ -1,5 +1,6 @@
 package com.example.supervisormobileapp_project.ui.screen.home
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,16 +11,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +43,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.supervisormobileapp_project.data.model.Company
+import com.example.supervisormobileapp_project.data.model.Resource
 import com.example.supervisormobileapp_project.ui.AuthViewModel
 import com.example.supervisormobileapp_project.ui.components.CustomBottomNavBar
 import com.example.supervisormobileapp_project.ui.components.OvalBackground
@@ -47,12 +57,12 @@ fun HomeScreen(
     onNavigateToProfile: () -> Unit,
     onNavigateToPatrolList: (Int) -> Unit,
     homeViewmodel: HomeViewmodel = hiltViewModel(),
-    ) {
-//    val vm: HomeViewmodel = viewModel()
-    val companies by homeViewmodel.companies.collectAsStateWithLifecycle()
+) {
+
+    val state by homeViewmodel.companies.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-//        vm.getCompanies()
         homeViewmodel.getCompaniesFromApi()
     }
 
@@ -67,29 +77,52 @@ fun HomeScreen(
     ) { innerPadding ->
         OvalBackground()
         Column(
-            verticalArrangement = Arrangement.spacedBy(15.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .fillMaxHeight()
                 .padding(innerPadding)
                 .padding(start = 20.dp, end = 20.dp, top = 15.dp)
         ) {
             //MASIH HARDCODE
             UsernameCard(fullName = "Budi Setiawan", position = "Supervisor")
-            LazyColumn(
-                modifier = Modifier,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(companies) { company ->
-                    CompanyCard(
-                        company = company,
-                        modifier = Modifier.clickable {
-                            onNavigateToPatrolList(
-                                company.id
-                            )
-                        },
-                    )
+            Spacer(Modifier.height(15.dp))
+            when (state) {
+                is Resource.Idle-> {}
+                is Resource.Loading -> Box(
+                    Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color(0xFF3F845F))
                 }
-                item {}
+
+                is Resource.Error -> Toast.makeText(
+                    context,
+                    "Pengambilan Data Gagal, Coba Periksa Jaringan",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                is Resource.Success -> {
+                    val companies = (state as Resource.Success).data
+                    LazyColumn(
+                        modifier = Modifier,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(companies) { company ->
+                            CompanyCard(
+                                company = company,
+                                modifier = Modifier.clickable {
+                                    onNavigateToPatrolList(
+                                        company.id
+                                    )
+                                },
+                            )
+                        }
+                        item {}
+                    }
+                }
             }
+
         }
     }
 }

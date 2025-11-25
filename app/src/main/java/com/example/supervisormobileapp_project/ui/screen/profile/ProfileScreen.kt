@@ -142,8 +142,8 @@ fun ProfileScreen(
                             label = "Status Kerja"
                         )
                         CustomTextField(
-                            value = token ?: "",
-//                            value = department,
+//                            value = token ?: "",
+                            value = department,
                             //onValueChange = { department = it },
                             label = "Departemen"
                         )

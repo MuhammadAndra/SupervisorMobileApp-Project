@@ -5,8 +5,8 @@ data class PatrolSpot(
     val id: Int,
     val title: String,
     val address: String,
-    val latitude: String,
-    val longitude:String,
+    val latitude: String?,
+    val longitude:String?,
     val description:String?,
-    var uidNfcTag: String?
+    var nfcTagUid: String?
 )

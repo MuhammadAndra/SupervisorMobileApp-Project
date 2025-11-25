@@ -1,10 +1,12 @@
 package com.example.supervisormobileapp_project.ui.screen.add_edit_patrol_spot
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -13,6 +15,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Contactless
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -32,6 +35,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.utf16CodePoint
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,12 +45,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.NfcReaderViewModel
+import com.example.supervisormobileapp_project.data.model.EditPatrolSpotResponse
 import com.example.supervisormobileapp_project.data.model.PatrolSpot
+import com.example.supervisormobileapp_project.data.model.Resource
 import com.example.supervisormobileapp_project.ui.components.CenterTopBar
 import com.example.supervisormobileapp_project.ui.components.CustomButton
 import com.example.supervisormobileapp_project.ui.components.CustomDialog
+import com.example.supervisormobileapp_project.ui.components.CustomLoadingButton
 import com.example.supervisormobileapp_project.ui.components.CustomTextField
-import com.example.supervisormobileapp_project.ui.screen.home.HomeViewmodel
 
 @Composable
 fun AddEditPatrolSpotScreen(
@@ -60,8 +66,12 @@ fun AddEditPatrolSpotScreen(
 //    onDisableNfc: () -> Unit
 ) {
     val uidHex by nfcVm.uidHex.collectAsState()
-    val patrolSpot = editPatrolSpotViewModel.patrolSpot.collectAsStateWithLifecycle()
+    val patrolSpot =
+        editPatrolSpotViewModel.patrolSpot.collectAsStateWithLifecycle()
 
+    val editPatrolSpotState by
+    editPatrolSpotViewModel.editPatrolSpotResponse.collectAsState()
+    val context = LocalContext.current
 //    val vm: EditPatrolSpotViewModel = viewModel()
 //    val patrolSpot = vm.patrolSpot.collectAsStateWithLifecycle()
 
@@ -90,16 +100,6 @@ fun AddEditPatrolSpotScreen(
     var openDialogMatching by remember { mutableStateOf(false) }
     var openDialogVerifyTextField by remember { mutableStateOf(false) }
 
-    //not needed failed attempt
-    var readOnlyTextField by remember { mutableStateOf(true) }
-    //not needed
-    LaunchedEffect(openDialogAddNFC || openDialogVerifyNFC) {
-        if (openDialogAddNFC || openDialogVerifyNFC) {
-//            onEnableNfc()
-        } else {
-//            onDisableNfc()
-        }
-    }
 
     //patrol spot detail data
     var locationName by remember { mutableStateOf("") }
@@ -124,16 +124,34 @@ fun AddEditPatrolSpotScreen(
         patrolSpot.value?.let { spot ->
             locationName = spot.title
             address = spot.address
-            latitude = spot.latitude
-            longitude = spot.longitude
+            latitude = spot.latitude ?: "-"
+            longitude = spot.longitude ?: "-"
             description = spot.description ?: "-"
-            nfcTagUid = spot.uidNfcTag ?: ""
+            nfcTagUid = spot.nfcTagUid ?: ""
         }
     }
 
     //check the button usage whether to verify or add nfc tag
     val buttonTitle =
-        if (patrolSpot.value?.uidNfcTag != null && nfcTagUid != "") "Verifikasi" else "Tambahkan"
+        if (patrolSpot.value?.nfcTagUid != null && nfcTagUid != "") "Verifikasi" else "Tambahkan"
+
+    LaunchedEffect(editPatrolSpotState) {
+        when(val state = editPatrolSpotState) {
+            is Resource.Error -> {
+                Toast.makeText(
+                    context,
+                    "Edit Gagal: NFC Tag TIDAK BOLEH SAMA dengan titik lain",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            is Resource.Success -> {
+                if (state.data.status == "success") {
+                    onBackClick()
+                }
+            }
+            else -> {}
+        }
+    }
 
     Scaffold(
         containerColor = Color.White,
@@ -180,6 +198,7 @@ fun AddEditPatrolSpotScreen(
                     modifier = Modifier.focusRequester(focusRequester),
                     value = nfcTagUid,
                     label = "UID NFC Tag",
+                    onValueChange = { nfcTagUid = it },
                     trailingIcon = {
                         //if nfc tag uid not null display clear text button
                         if (nfcTagUid != "") {
@@ -204,19 +223,14 @@ fun AddEditPatrolSpotScreen(
             ) {
                 CustomButton(
                     onClick = {
-                        //failed attempt
-//                        readOnlyTextField = false
-//                        focusRequester.requestFocus()
-//                        openDialogAddVerifyNFC = true
+
                         //if dialog from database and local is empty. if not open dialog to verify
-                        if (patrolSpot.value?.uidNfcTag != null && nfcTagUid != "") {
+                        if (patrolSpot.value?.nfcTagUid != null && nfcTagUid != "") {
                             nfcVm.clearUid()
                             openDialogVerifyNFC = true
-//                            onEnableNfc()
                         } else {
                             nfcVm.clearUid()
                             openDialogAddNFC = true
-//                            onEnableNfc()
                         }
                     },
                     text = "$buttonTitle NFC Tag",
@@ -224,12 +238,18 @@ fun AddEditPatrolSpotScreen(
                     leadingImageVector = Icons.Outlined.Contactless,
                     endingImageVector = Icons.Default.ArrowForwardIos
                 )
-                CustomButton(
+                //loading button
+                CustomLoadingButton(
                     onClick = {
-                        //check if all the text field already filled
-                        if (locationName != "" && address != "" && latitude != "" && longitude != "" && description != "") {
-                            editPatrolSpotViewModel.changePatrolSpot(
-                                id = id!!, newSpot = PatrolSpot(
+                        if (
+                            locationName != "" &&
+                            address != "" &&
+                            latitude != "" &&
+                            longitude != "" &&
+                            description != ""
+                        ) {
+                            editPatrolSpotViewModel.changePatrolSpotFromApi(
+                                id = id!!, editedPatrolSpot = PatrolSpot(
                                     companyId = patrolSpot.value!!.companyId,
                                     id = patrolSpot.value!!.id,
                                     title = locationName,
@@ -237,16 +257,32 @@ fun AddEditPatrolSpotScreen(
                                     latitude = latitude,
                                     longitude = longitude,
                                     description = description,
-                                    uidNfcTag = nfcTagUid
+                                    nfcTagUid = nfcTagUid
                                 )
                             )
-                            onBackClick()
+
                         } else {
                             openDialogVerifyTextField = true
                         }
                     },
-                    text = "$title Titik Patroli Baru",
                     color = Color(0XFF3F845F),
+                    content = {
+                        if (editPatrolSpotState !is Resource.Loading) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "Edit Titik Patroli",
+                                color = Color.White,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        } else {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 )
             }
         }
@@ -410,7 +446,7 @@ fun AddEditPatrolSpotScreen(
                 },
                 onConfirmation = {
                     nfcTagUid = ""
-                    patrolSpot.value?.uidNfcTag = null
+                    patrolSpot.value?.nfcTagUid = null
                     openDialogDeleteNFC = false
                 },
                 title = {

@@ -17,7 +17,7 @@ fun fetchPatrolSpotById(id: Int): PatrolSpot {
 //}
 
 fun fetchPatrolSpotByNfcUidResponse(nfcUid: String): ReadNFCResponse {
-    val data: PatrolSpot? = patrolSpotList.firstOrNull { it.uidNfcTag == nfcUid }
+    val data: PatrolSpot? = patrolSpotList.firstOrNull { it.nfcTagUid == nfcUid }
     return ReadNFCResponse(
         status = if (data!=null) "success" else "error",
         message =  "NFC Tag UID${ if (data!=null) " " else " not "}compatible with database" ,
@@ -92,7 +92,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.953810836342468",
         longitude = "112.61454711534338",
         description = "Area Lobby dan Kemahasiswaan",
-        uidNfcTag = "0484095538",
+        nfcTagUid = "0484095538",
     ),
     PatrolSpot(
         companyId = 1,
@@ -102,7 +102,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.953810836342468",
         longitude = "112.61454711534338",
         description = "Area pembelajaran dan ruang baca",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 1,
@@ -112,7 +112,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.953810836342468",
         longitude = "112.61454711534338",
         description = "Area pembelajaran",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
 
     // Company 2: Malang Creative Center
@@ -124,7 +124,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.942182",
         longitude = "112.637821",
         description = "Area produksi video dan konten kreatif",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 2,
@@ -134,7 +134,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.941893",
         longitude = "112.637111",
         description = "Area kerja startup binaan MCC",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 2,
@@ -144,7 +144,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.942495",
         longitude = "112.636920",
         description = "Area kegiatan seminar dan workshop",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
 
     // Company 3: Mall Olympic Garden
@@ -156,7 +156,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.977512",
         longitude = "112.630018",
         description = "Area makan pengunjung lantai atas",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 3,
@@ -166,7 +166,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.977800",
         longitude = "112.630210",
         description = "Area parkir kendaraan pengunjung",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 3,
@@ -176,7 +176,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.977600",
         longitude = "112.629980",
         description = "Area masuk utama mall dan pusat informasi",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
 
     // Company 4: Pemerintah Kota Malang
@@ -188,7 +188,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.981345",
         longitude = "112.631122",
         description = "Ruang rapat utama untuk pertemuan resmi",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 4,
@@ -198,7 +198,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.981589",
         longitude = "112.631412",
         description = "Area penerimaan tamu dan pelayanan publik",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 4,
@@ -208,7 +208,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.981210",
         longitude = "112.631780",
         description = "Area penyimpanan arsip dan dokumen penting",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
 
     // Company 5: Malang Town Square
@@ -220,7 +220,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.957442",
         longitude = "112.619543",
         description = "Patroli di area cinema dan koridor sekitar",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 5,
@@ -230,7 +230,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.957211",
         longitude = "112.619700",
         description = "Area parkir kendaraan dan pos keamanan",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 5,
@@ -240,7 +240,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.957650",
         longitude = "112.619380",
         description = "Area kuliner pengunjung lantai 3",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
 
     // Company 6: RSI Unisma
@@ -252,7 +252,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.946543",
         longitude = "112.615890",
         description = "Area perawatan intensif pasien",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 6,
@@ -262,7 +262,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.946812",
         longitude = "112.616001",
         description = "Area operasi dan sterilisasi medis",
-        uidNfcTag = null,
+        nfcTagUid = null,
     ),
     PatrolSpot(
         companyId = 6,
@@ -272,7 +272,7 @@ val patrolSpotList = mutableListOf(
         latitude = "-7.946730",
         longitude = "112.615760",
         description = "Tempat penyimpanan dan distribusi obat",
-        uidNfcTag = null,
+        nfcTagUid = null,
     )
 )
 
