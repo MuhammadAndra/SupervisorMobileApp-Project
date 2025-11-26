@@ -60,10 +60,14 @@ fun HomeScreen(
 ) {
 
     val state by homeViewmodel.companies.collectAsState()
+    val userProfile by homeViewmodel.userProfile.collectAsState()
+    val employeeProfile by homeViewmodel.employeeProfile.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         homeViewmodel.getCompaniesFromApi()
+        homeViewmodel.getUserProfile()
+        homeViewmodel.getEmployeeProfile()
     }
 
     Scaffold(
@@ -85,10 +89,14 @@ fun HomeScreen(
                 .padding(start = 20.dp, end = 20.dp, top = 15.dp)
         ) {
             //MASIH HARDCODE
-            UsernameCard(fullName = "Budi Setiawan", position = "Supervisor")
+            UsernameCard(
+                fullName = employeeProfile?.data?.fullName ?: "",
+                position = employeeProfile?.data?.position ?: "",
+                imageUrl = userProfile?.data?.photo  ?: "",
+            )
             Spacer(Modifier.height(15.dp))
             when (state) {
-                is Resource.Idle-> {}
+                is Resource.Idle -> {}
                 is Resource.Loading -> Box(
                     Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center

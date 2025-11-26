@@ -21,11 +21,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import okhttp3.internal.wait
 
 
@@ -33,9 +39,10 @@ import okhttp3.internal.wait
 //kalo ga diisi onNavigate jadi transparan + gabisa diklik
 @Composable
 fun UsernameCard(
+    modifier: Modifier = Modifier,
     fullName:String,
     position:String,
-    modifier: Modifier = Modifier,
+    imageUrl:String = "",
     onNavigateToProfileDetail: (() -> Unit)? = null,
 ) {
     val cardColors = if (onNavigateToProfileDetail == null) {
@@ -74,20 +81,21 @@ fun UsernameCard(
         ) {
             Box(
                 modifier = Modifier
-                    .background(
-                        Color(0XFFCACACA),
-                        shape = CircleShape
-                    )
-                    .padding(13.dp),
+                    .background(Color(0XFFCACACA), shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "person icon",
-                    tint = Color(0XFFA9A9A9),
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Gambar Menu",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(70.dp)
+                        .clip(CircleShape)
                 )
+
             }
             Column {
                 Text(

@@ -1,0 +1,40 @@
+package com.example.supervisormobileapp_project.data.model
+
+import com.google.gson.annotations.SerializedName
+
+data class Employees(
+    @SerializedName("id")val id: Int,
+    @SerializedName("user_id") val userId: Int,
+    @SerializedName("fullname") val fullName: String,
+    @SerializedName("nickname") val nickname: String,
+    @SerializedName("phone") val phone: String,
+    @SerializedName("emergency_contact") val emergencyContact: String,
+    @SerializedName("emergency_phone") val emergencyPhone: String,
+    @SerializedName("gender") val gender: String,
+    @SerializedName("birth_date") val birthDate: String,
+    @SerializedName("birth_place") val birthPlace: String,
+    @SerializedName("marital_status") val maritalStatus: String,
+    @SerializedName("nationality") val nationality: String,
+    @SerializedName("religion") val religion: String,
+    @SerializedName("blood_type") val bloodType: String,
+    @SerializedName("id_number") val idNumber: String,
+    @SerializedName("tax_number") val taxNumber: String,
+    @SerializedName("social_security_number") val socialSecurityNumber: String,
+    @SerializedName("health_insurance_number") val healthInsuranceNumber: String,
+    @SerializedName("address") val address: String,
+    @SerializedName("city") val city: String,
+    @SerializedName("province") val province: String,
+    @SerializedName("postal_code") val postalCode: String,
+    @SerializedName("department") val department: String,
+    @SerializedName("position") val position: String,
+    @SerializedName("employment_status") val employmentStatus: String,
+    @SerializedName("hire_date") val hireDate: String,
+    @SerializedName("contract_end_date") val contractEndDate: String,
+    @SerializedName("salary") val salary: String,
+    @SerializedName("bank_name") val bankName: String,
+    @SerializedName("bank_account_number") val bankAccountNumber: String,
+    @SerializedName("active") val active: Int,
+    @SerializedName("created_at") val createdAt: String,
+    @SerializedName("updated_at") val updatedAt: String,
+    @SerializedName("company_id") val companyId: Int
+)

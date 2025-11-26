@@ -146,11 +146,7 @@ fun AddEditPatrolSpotScreen(
             }
 
             is Resource.Success -> {
-                if (state.data.message == "NFC Tag UID compatible with database") {
-                    isMatching = true
-                } else {
-                    isMatching = false
-                }
+                isMatching = state.data.message == "NFC Tag UID compatible with database"
                 openDialogMatching = true
                 openDialogVerifyNFC = false
                 nfcVm.clearUid()

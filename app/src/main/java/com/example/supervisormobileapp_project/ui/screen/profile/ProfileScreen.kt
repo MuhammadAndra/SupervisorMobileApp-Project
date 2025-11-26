@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,12 +59,16 @@ fun ProfileScreen(
     onNavigateToProfileDetail: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToChangePassword: () -> Unit,
-    profileViewModel: ProfileViewModel = viewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val supervisor = profileViewModel.supervisor.collectAsStateWithLifecycle()
+    val userProfile by profileViewModel.userProfile.collectAsState()
+    val employeeProfile by profileViewModel.employeeProfile.collectAsState()
     LaunchedEffect(Unit) {
-        profileViewModel.getSupervisor()
+//        profileViewModel.getSupervisor()
+        profileViewModel.getUserProfile()
+        profileViewModel.getEmployeeProfile()
     }
     var fullName by remember { mutableStateOf("") }
     var position by remember { mutableStateOf("") }
@@ -71,22 +76,36 @@ fun ProfileScreen(
     var nip by remember { mutableStateOf("") }
     var jobStatus by remember { mutableStateOf("") }
     var department by remember { mutableStateOf("") }
+    var imageUrl by remember { mutableStateOf("") }
     var openDialog by remember { mutableStateOf(false) }
 
     val token = authViewModel.getToken()
 
-    LaunchedEffect(supervisor.value) {
-        supervisor.value?.let {
-            fullName = it.fullName
-            position = it.position
-            nickname = it.nickname
-            nip = it.nip
-            jobStatus = it.jobStatus
-            department = it.department
+//    LaunchedEffect(supervisor.value) {
+//        supervisor.value?.let {
+//            fullName = it.fullName
+//            position = it.position
+//            nickname = it.nickname
+//            nip = it.nip
+//            jobStatus = it.jobStatus
+//            department = it.department
+//        }
+//    }
+    LaunchedEffect(userProfile) {
+        imageUrl = userProfile?.data?.photo ?: ""
+    }
+    LaunchedEffect(employeeProfile) {
+        employeeProfile?.data.let {
+            fullName = it?.fullName ?: ""
+            position = it?.position ?: ""
+            nickname = it?.nickname ?: ""
+            nip = it?.idNumber ?: ""
+            jobStatus = it?.employmentStatus ?: ""
+            department = it?.department ?: ""
         }
     }
 
-    fun logout(){
+    fun logout() {
         authViewModel.logout()
     }
 
@@ -113,6 +132,7 @@ fun ProfileScreen(
             UsernameCard(
                 fullName = fullName,
                 position = position,
+                imageUrl = imageUrl,
                 modifier = Modifier.padding(all = 20.dp),
                 onNavigateToProfileDetail = onNavigateToProfileDetail
             )

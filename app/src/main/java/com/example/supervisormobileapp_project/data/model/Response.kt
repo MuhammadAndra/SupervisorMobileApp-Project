@@ -21,3 +21,18 @@ data class CheckPatrolSpotResponse(
     val message:String,
     val data: PatrolSpot
 )
+
+data class EmployeeResponse(
+    val status: Int,
+    val success: Boolean,
+    val message: String,
+    val data: Employees,
+    val exceptions: Any? = null
+)
+
+data class UserProfileResponse(
+    val status: Int,
+    val success: Boolean,
+    val message: String,
+    val data: UserProfileData
+)

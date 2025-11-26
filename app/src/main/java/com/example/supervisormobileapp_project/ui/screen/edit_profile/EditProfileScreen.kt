@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.supervisormobileapp_project.data.model.Supervisor
@@ -24,12 +26,18 @@ import com.example.supervisormobileapp_project.ui.components.CustomTextField
 import com.example.supervisormobileapp_project.ui.screen.profile.ProfileViewModel
 
 @Composable
-fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
-
-    val vm: ProfileViewModel = viewModel()
+fun EditProfile(
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+    vm: ProfileViewModel = hiltViewModel(),
+) {
     val supervisor = vm.supervisor.collectAsStateWithLifecycle()
+
+    val employeeProfile by vm.employeeProfile.collectAsState()
+
     LaunchedEffect(Unit) {
-        vm.getSupervisor()
+//        vm.getSupervisor()
+        vm.getEmployeeProfile()
     }
     var fullName by remember { mutableStateOf("") }
     var position by remember { mutableStateOf("") }
@@ -39,35 +47,52 @@ fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
     var department by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
     var religion by remember { mutableStateOf("") }
+    var imageUrl by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
 
-    LaunchedEffect(supervisor.value) {
-        supervisor.value?.let {
-            fullName = it.fullName
-            position = it.position
-            nickname = it.nickname
-            nip = it.nip
-            jobStatus = it.jobStatus
-            department = it.department
-            gender = it.gender
-            religion = it.religion
-            address = it.address
+//    LaunchedEffect(supervisor.value) {
+//        supervisor.value?.let {
+//            fullName = it.fullName
+//            position = it.position
+//            nickname = it.nickname
+//            nip = it.nip
+//            jobStatus = it.jobStatus
+//            department = it.department
+//            gender = it.gender
+//            religion = it.religion
+//            address = it.address
+//        }
+//    }
+
+    LaunchedEffect(employeeProfile) {
+        employeeProfile?.data.let {
+            fullName = it?.fullName ?: ""
+            position = it?.position ?: ""
+            nickname = it?.nickname ?: ""
+            nip = it?.idNumber ?: ""
+            jobStatus = it?.employmentStatus ?: ""
+            department = it?.department ?: ""
+            gender = it?.gender ?:""
+            religion = it?.religion ?:""
+            address = it?.address ?:""
         }
     }
 
 
     fun onSaveChanges() {
-        vm.editSupervisorData(Supervisor(
-            fullName = fullName,
-            nickname = nickname,
-            nip = nip,
-            jobStatus = jobStatus,
-            position = position,
-            department = department,
-            gender = gender,
-            religion = religion,
-            address = address
-        ))
+        vm.editSupervisorData(
+            Supervisor(
+                fullName = fullName,
+                nickname = nickname,
+                nip = nip,
+                jobStatus = jobStatus,
+                position = position,
+                department = department,
+                gender = gender,
+                religion = religion,
+                address = address
+            )
+        )
     }
 
     Scaffold(
@@ -79,9 +104,11 @@ fun EditProfile(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
             )
         },
     ) { innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .padding(top = 20.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(top = 20.dp)
+        ) {
             CustomTextField(
                 value = fullName,
                 onValueChange = { fullName = it },

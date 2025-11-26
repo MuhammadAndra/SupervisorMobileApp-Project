@@ -171,44 +171,6 @@ fun ReadNFCScreen(
                     )
                 }
             }
-            //if success show data
-//            if (patrolSpot.value?.status == "success" && patrolSpot.value?.data != null) {
-//                nfcTagUid = ""
-//                NFCTagData(
-//                    location = patrolSpot.value?.data?.title ?: "",
-//                    address = patrolSpot.value?.data?.address ?: "",
-//                    longitude = patrolSpot.value?.data?.longitude ?: "",
-//                    latitude = patrolSpot.value?.data?.latitude ?: "",
-//                    description = patrolSpot.value?.data?.description ?: "",
-//                    nfcTagUid = patrolSpot.value?.data?.nfcTagUid ?: "",
-//                )
-//                //if error show dialog
-//            } else if (patrolSpot.value?.status == "error") {
-//                openDialog = true
-//                nfcTagUid = ""
-//                readNFCViewModel.clearPatrolSpot()
-//            } else {
-//                //else show message to scan nfc
-//                Column(
-//                    modifier = Modifier.fillMaxSize(),
-//                    verticalArrangement = Arrangement.Center,
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-//                ) {
-//                    Icon(
-//                        modifier = Modifier.size(90.dp),
-//                        imageVector = Icons.Outlined.Contactless,
-//                        contentDescription = "Read NFC Tag Icon",
-//                        tint = Color(0XFF3F845F)
-//                    )
-//                    Spacer(Modifier.height(20.dp))
-//                    Text(
-//                        "Tempelkan NFC Tag",
-//                        fontWeight = FontWeight.Medium,
-//                        fontSize = 20.sp,
-//                        color = Color(0XFF3F845F)
-//                    )
-//                }
-//            }
         }
     }
     when {

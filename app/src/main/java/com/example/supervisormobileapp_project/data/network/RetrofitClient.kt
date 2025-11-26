@@ -3,6 +3,7 @@ package com.example.supervisormobileapp_project.data.network
 import com.example.supervisormobileapp_project.data.network.api_service.AuthApiService
 import com.example.supervisormobileapp_project.data.network.api_service.CompanyApiService
 import com.example.supervisormobileapp_project.data.network.api_service.PatrolSpotApiService
+import com.example.supervisormobileapp_project.data.network.api_service.ProfileApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -32,4 +33,5 @@ object RetrofitClient {
     val authApi: AuthApiService by lazy { retrofit.create(AuthApiService::class.java) }
     val companyApi: CompanyApiService by lazy { retrofit.create(CompanyApiService::class.java) }
     val patrolSpotApi: PatrolSpotApiService by lazy { retrofit.create(PatrolSpotApiService::class.java) }
+    val profileApi: ProfileApiService by lazy { retrofit.create(ProfileApiService::class.java) }
 }
